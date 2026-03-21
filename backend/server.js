@@ -1,18 +1,32 @@
-const express = require('express');
+const app = require('./src/app');
 const dotenv = require('dotenv');
-const connectDB = require('./src/db/db');
 
 dotenv.config();
 
-const app = express();
-app.use(express.json());
-
 const PORT = process.env.PORT || 5000;
 
-(async () => {
-	await connectDB();
+const server = app.listen(PORT, () => {
+  console.log(`
+  ╔═══════════════════════════════════════╗
+  ║   Learnova - eLearning Platform       ║
+  ║   Server running on port ${PORT}            ║
+  ║   Environment: ${process.env.NODE_ENV || 'development'}         ║
+  ╚═══════════════════════════════════════╝
+  `);
+});
 
-	app.get('/', (req, res) => res.send('API is running'));
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.error(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
 
-	app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})();
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.error(err.name, err.message);
+  process.exit(1);
+});
