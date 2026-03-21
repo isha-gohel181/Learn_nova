@@ -331,6 +331,51 @@ export default function DashboardPage() {
           </Card>
         ) : null}
 
+        {profile?.role === 'learner' && dashboardData?.courseProgress?.length > 0 ? (
+          <Card className='border border-[rgba(139,92,246,0.3)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] backdrop-blur-xl'>
+            <CardHeader>
+              <CardTitle className='text-xl'>My Enrolled Courses</CardTitle>
+              <CardDescription className='text-[#9CA3AF]'>Continue your learning journey</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+                {dashboardData.courseProgress.map((enrolled) => (
+                  <div
+                    key={enrolled._id}
+                    className='relative overflow-hidden rounded-[16px] border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] flex flex-col transition-all hover:bg-[rgba(255,255,255,0.05)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1'
+                  >
+                    <div className='flex items-center gap-3 p-4 border-b border-[rgba(255,255,255,0.05)] bg-[linear-gradient(90deg,rgba(139,92,246,0.1),transparent)]'>
+                       <div className="w-10 h-10 rounded-lg bg-[rgba(139,92,246,0.2)] flex items-center justify-center text-[#A78BFA] border border-[rgba(139,92,246,0.3)] shadow-[0_0_10px_rgba(139,92,246,0.2)]">
+                          🎬
+                       </div>
+                       <div className="flex-1">
+                         <h3 className="font-semibold text-[#E5E7EB] line-clamp-1">{enrolled.courseId?.title || 'Unknown Course'}</h3>
+                         <p className="text-xs text-[#9CA3AF] mt-0.5">{enrolled.completedLessons?.length || 0} lessons completed</p>
+                       </div>
+                    </div>
+                    
+                    <div className='p-4 flex-1 flex flex-col justify-end space-y-4'>
+                       <div className="space-y-1.5">
+                         <div className="flex justify-between items-center text-xs text-[#9CA3AF]">
+                           <span>Current Progress</span>
+                           <span className="font-medium text-[#A78BFA]">{enrolled.progressPercent || 0}%</span>
+                         </div>
+                         <Progress value={enrolled.progressPercent || 0} className='h-1.5 bg-[rgba(255,255,255,0.1)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#8B5CF6_0%,#EC4899_100%)]' />
+                       </div>
+                       
+                       <Link to={`/learn/${enrolled.courseId?._id}`} className="w-full">
+                         <Button className='w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-[0_0_15px_rgba(139,92,246,0.25)] border-none h-9 text-xs rounded-lg transition-colors'>
+                           {enrolled.progressPercent === 100 ? 'Review completed course' : (enrolled.progressPercent > 0 ? 'Continue learning' : 'Start learning')}
+                         </Button>
+                       </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
         <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
           <CardHeader>
             <CardTitle className='text-xl'>Published Courses</CardTitle>

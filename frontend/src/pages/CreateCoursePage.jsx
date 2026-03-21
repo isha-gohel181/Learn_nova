@@ -32,12 +32,17 @@ export default function CreateCoursePage() {
       if (bannerPreview) {
         URL.revokeObjectURL(bannerPreview);
       }
+    };
+  }, [bannerPreview]);
+
+  useEffect(() => {
+    return () => {
       if (introVideoPreview) {
         URL.revokeObjectURL(introVideoPreview);
       }
     };
-  }, [bannerPreview, introVideoPreview]);
-  
+  }, [introVideoPreview]);
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -77,6 +82,11 @@ export default function CreateCoursePage() {
 
     if (!formData.title || !formData.description) {
       setError('Title and description are required.');
+      return;
+    }
+
+    if (formData.description.length < 10) {
+      setError('Description must be at least 10 characters long.');
       return;
     }
 

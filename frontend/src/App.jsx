@@ -15,6 +15,9 @@ import InstructorCoursesPage from '@/pages/InstructorCoursesPage';
 import CreateCoursePage from '@/pages/CreateCoursePage';
 import EditCoursePage from '@/pages/EditCoursePage';
 import { getProfile } from '@/lib/api';
+import LessonManagementPage from '@/pages/LessonManagementPage';
+import QuizManagementPage from '@/pages/QuizManagementPage';
+import CourseAnalyticsPage from '@/pages/CourseAnalyticsPage';
 
 function RoleBasedDashboardRedirect() {
   const navigate = useNavigate();
