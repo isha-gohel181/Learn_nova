@@ -73,7 +73,7 @@ const seedDatabase = async () => {
         title: 'Web Development Fundamentals',
         description: 'Learn the basics of web development including HTML, CSS, and JavaScript',
         tags: ['web', 'development', 'javascript', 'html', 'css'],
-        image: 'https://via.placeholder.com/400x300?text=Web+Development',
+        image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80',
         isPublished: true,
         visibility: 'everyone',
         accessType: 'open',
@@ -89,7 +89,7 @@ const seedDatabase = async () => {
         title: 'Advanced JavaScript Concepts',
         description: 'Master advanced JavaScript concepts like closures, prototypes, and async programming',
         tags: ['javascript', 'advanced', 'programming'],
-        image: 'https://via.placeholder.com/400x300?text=Advanced+JS',
+        image: 'https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80',
         isPublished: true,
         visibility: 'everyone',
         accessType: 'open',
@@ -105,7 +105,7 @@ const seedDatabase = async () => {
         title: 'React.js Complete Guide',
         description: 'Build modern web applications with React.js',
         tags: ['react', 'javascript', 'frontend'],
-        image: 'https://via.placeholder.com/400x300?text=React+Guide',
+        image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80',
         isPublished: true,
         visibility: 'everyone',
         accessType: 'open',
@@ -121,7 +121,7 @@ const seedDatabase = async () => {
         title: 'Node.js Backend Development',
         description: 'Create scalable backend applications with Node.js and Express',
         tags: ['nodejs', 'backend', 'express', 'javascript'],
-        image: 'https://via.placeholder.com/400x300?text=Node.js',
+        image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&q=80',
         isPublished: false,
         visibility: 'everyone',
         accessType: 'open',
@@ -130,6 +130,182 @@ const seedDatabase = async () => {
         enrolledUsers: [],
         totalLessons: 0,
       },
+      {
+        title: 'Python for Data Science',
+        description: 'Learn Python programming from scratch focusing on Data Science applications',
+        tags: ['python', 'data science', 'programming'],
+        image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'open',
+        price: 0,
+        instructorId: instructors[0]._id,
+        enrolledUsers: [learners[2]._id],
+        totalLessons: 8,
+        totalRating: 50,
+        averageRating: 4.8,
+        reviewCount: 10,
+      },
+      {
+        title: 'UI/UX Design Principles',
+        description: 'Design beautiful, usable interfaces learning Figma and design theory',
+        tags: ['design', 'ui', 'ux', 'figma'],
+        image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'paid',
+        price: 29.99,
+        instructorId: instructors[1]._id,
+        enrolledUsers: [learners[0]._id],
+        totalLessons: 6,
+        totalRating: 30,
+        averageRating: 4.4,
+        reviewCount: 7,
+      },
+      {
+        title: 'Mastering TypeScript',
+        description: 'Level up your JavaScript code by learning TypeScript fundamentals and advanced types',
+        tags: ['typescript', 'javascript', 'frontend'],
+        image: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'open',
+        price: 0,
+        instructorId: instructors[0]._id,
+        enrolledUsers: [learners[1]._id],
+        totalLessons: 4,
+        totalRating: 20,
+        averageRating: 4.7,
+        reviewCount: 5,
+      },
+      {
+        title: 'Docker & Kubernetes Basics',
+        description: 'Introduction to containerization and orchestration for modern DevOps',
+        tags: ['devops', 'docker', 'kubernetes', 'backend'],
+        image: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'paid',
+        price: 49.99,
+        instructorId: instructors[1]._id,
+        enrolledUsers: [],
+        totalLessons: 10,
+        totalRating: 0,
+        averageRating: 0,
+        reviewCount: 0,
+      },
+      {
+        title: 'Machine Learning A-Z',
+        description: 'Complete guide to Machine Learning algorithms and implementations',
+        tags: ['machine learning', 'ai', 'python'],
+        image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'paid',
+        price: 89.99,
+        instructorId: instructors[0]._id,
+        enrolledUsers: [learners[0]._id, learners[2]._id],
+        totalLessons: 15,
+        totalRating: 120,
+        averageRating: 4.9,
+        reviewCount: 25,
+      },
+      {
+        title: 'Fullstack Next.js 14',
+        description: 'Build production-ready fullstack applications using the latest Next.js 14 features',
+        tags: ['nextjs', 'react', 'fullstack'],
+        image: 'https://images.unsplash.com/photo-1618477247222-ac60c628164e?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'open',
+        price: 0,
+        instructorId: instructors[1]._id,
+        enrolledUsers: [learners[1]._id, learners[0]._id, learners[2]._id],
+        totalLessons: 12,
+        totalRating: 85,
+        averageRating: 4.6,
+        reviewCount: 18,
+      },
+      {
+        title: 'Cybersecurity 101',
+        description: 'Learn the fundamentals of hacking, securing networks, and identifying vulnerabilities',
+        tags: ['security', 'cybersecurity', 'networks'],
+        image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'open',
+        price: 0,
+        instructorId: instructors[0]._id,
+        enrolledUsers: [learners[2]._id],
+        totalLessons: 5,
+        totalRating: 15,
+        averageRating: 4.1,
+        reviewCount: 4,
+      },
+      {
+        title: 'Introduction to GraphQL',
+        description: 'Move away from REST and learn how to query APIs with GraphQL and Apollo',
+        tags: ['graphql', 'api', 'backend'],
+        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80',
+        isPublished: false,
+        visibility: 'everyone',
+        accessType: 'open',
+        price: 0,
+        instructorId: instructors[1]._id,
+        enrolledUsers: [],
+        totalLessons: 0,
+        totalRating: 0,
+        averageRating: 0,
+        reviewCount: 0,
+      },
+      {
+        title: 'Mobile App Dev with React Native',
+        description: 'Build native iOS and Android applications using React Native and Expo',
+        tags: ['mobile', 'react native', 'javascript'],
+        image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'paid',
+        price: 39.99,
+        instructorId: instructors[0]._id,
+        enrolledUsers: [learners[1]._id],
+        totalLessons: 9,
+        totalRating: 40,
+        averageRating: 4.5,
+        reviewCount: 9,
+      },
+      {
+        title: 'AWS Cloud Practitioner',
+        description: 'Prepare for the AWS Cloud Practitioner certification with hands-on labs',
+        tags: ['aws', 'cloud', 'certification'],
+        image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'open',
+        price: 0,
+        instructorId: instructors[1]._id,
+        enrolledUsers: [learners[0]._id, learners[2]._id],
+        totalLessons: 14,
+        totalRating: 65,
+        averageRating: 4.8,
+        reviewCount: 15,
+      },
+      {
+        title: 'Go Programming Language',
+        description: 'Write fast, reliable, and efficient software at scale with Golang',
+        tags: ['go', 'golang', 'backend'],
+        image: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80',
+        isPublished: true,
+        visibility: 'everyone',
+        accessType: 'paid',
+        price: 19.99,
+        instructorId: instructors[0]._id,
+        enrolledUsers: [learners[1]._id],
+        totalLessons: 7,
+        totalRating: 22,
+        averageRating: 4.6,
+        reviewCount: 5,
+      }
     ]);
 
     // Create sample lessons for first course
@@ -178,37 +354,57 @@ const seedDatabase = async () => {
       },
     ]);
 
-    // Create sample quiz
-    const quiz = await Quiz.create({
-      courseId: courses[0]._id,
-      questions: [
-        {
-          questionText: 'What does HTML stand for?',
-          options: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Home Tool Markup Language', 'Hyperlinks and Text Markup Language'],
-          correctAnswers: [0],
-          explanation: 'HTML stands for HyperText Markup Language',
-          points: 1,
-        },
-        {
-          questionText: 'Which CSS property is used to change font color?',
-          options: ['font-color', 'color', 'text-color', 'font'],
-          correctAnswers: [1],
-          explanation: 'The color property is used to change text color in CSS',
-          points: 1,
-        },
-        {
-          questionText: 'What does JavaScript use for comments?',
-          options: ['# comment', '/ comment', '// for single line, /* */ for multi-line', '-- comment'],
-          correctAnswers: [2],
-          explanation: 'JavaScript uses // for single line and /* */ for multi-line comments',
-          points: 1,
-        },
-      ],
-      rewards: { first: 10, second: 8, third: 5, fourth: 2 },
-      passingScore: 60,
-      totalQ: 3,
-      isPublished: true,
-    });
+    // Create quizzes for all courses
+    const quizzes = await Quiz.insertMany(
+      courses.map((course, index) => {
+        const difficulty = index % 3;
+        const baseQuestions = [
+          {
+            questionText: 'What is the main goal of this course?',
+            options: ['Understand core concepts', 'Learn only advanced topics', 'Focus on tooling only', 'Skip fundamentals'],
+            correctAnswers: [0],
+            explanation: 'Each course starts with core concepts before advanced topics.',
+            points: 1,
+          },
+          {
+            questionText: 'Which statement best describes best practices?',
+            options: ['Ignore documentation', 'Use consistent patterns', 'Avoid testing', 'Skip code reviews'],
+            correctAnswers: [1],
+            explanation: 'Consistent patterns and documentation are considered best practice.',
+            points: 1,
+          },
+          {
+            questionText: 'When should you apply what you learn?',
+            options: ['Only at the end', 'During practice exercises', 'Never', 'Only in theory'],
+            correctAnswers: [1],
+            explanation: 'Practice reinforces understanding throughout the course.',
+            points: 1,
+          },
+        ];
+
+        const advancedQuestion =
+          difficulty === 2
+            ? {
+                questionText: 'What is a common pitfall to avoid in projects?',
+                options: ['Ignoring edge cases', 'Writing documentation', 'Refactoring', 'Testing'],
+                correctAnswers: [0],
+                explanation: 'Edge cases are easy to miss and can cause failures.',
+                points: 2,
+              }
+            : null;
+
+        const questions = advancedQuestion ? [...baseQuestions, advancedQuestion] : baseQuestions;
+
+        return {
+          courseId: course._id,
+          questions,
+          rewards: { first: 10, second: 8, third: 5, fourth: 2 },
+          passingScore: advancedQuestion ? 70 : 60,
+          totalQ: questions.length,
+          isPublished: true,
+        };
+      })
+    );
 
     console.log('✅ Database seeded successfully!');
     console.log(`
@@ -217,7 +413,7 @@ const seedDatabase = async () => {
     - ${learners.length} Learners
     - ${courses.length} Courses
     - ${lessons.length} Lessons
-    - ${1} Quiz
+    - ${quizzes.length} Quizzes
 
     Sample Login Credentials:
     Instructor: john@instructor.com / password123

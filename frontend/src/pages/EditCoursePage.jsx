@@ -50,7 +50,7 @@ export default function EditCoursePage() {
           visibility: course.visibility || 'everyone',
           accessType: course.accessType || 'open',
           price: course.price || 0,
-          image: course.image || ''
+          image: course.mediaUrl || course.image || ''
         });
       } catch (err) {
         setError(err.message || 'Failed to fetch course details');

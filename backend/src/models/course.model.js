@@ -23,6 +23,19 @@ const courseSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    mediaUrl: {
+      type: String,
+      default: null,
+    },
+    mediaType: {
+      type: String,
+      enum: ['image', 'video'],
+      default: 'image',
+    },
+    introVideoUrl: {
+      type: String,
+      default: null,
+    },
     isPublished: {
       type: Boolean,
       default: false,
