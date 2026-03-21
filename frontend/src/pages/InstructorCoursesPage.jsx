@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { API_BASE_URL, getInstructorCourses, deleteCourse, publishCourse } from '@/lib/api';
 import { ArrowLeft, BookOpen, Plus, Edit, Trash2, Eye, EyeOff, MoreVertical, PlayCircle, FileQuestion, BarChart } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 function isVideoUrl(url) {
   if (!url) return false;
@@ -85,7 +86,7 @@ export default function InstructorCoursesPage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <section className='relative mx-auto max-w-6xl space-y-6'>
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
@@ -151,9 +152,11 @@ export default function InstructorCoursesPage() {
                   const showVideo = course.mediaType === 'video' || isVideoUrl(mediaUrl);
 
                   return (
-                    <div
+                    <ParallaxTilt
                       key={course._id}
                       className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] overflow-hidden flex flex-col group transition-all duration-300 hover:border-[rgba(139,92,246,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]'
+                      max={12}
+                      hoverScale={1.02}
                     >
                       <div className='h-32 bg-[rgba(255,255,255,0.02)] relative border-b border-[rgba(255,255,255,0.05)]'>
                         {mediaUrl ? (
@@ -256,7 +259,7 @@ export default function InstructorCoursesPage() {
                           </Link>
                         </div>
                       </div>
-                    </div>
+                    </ParallaxTilt>
                   );
                 })}
               </div>

@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getLessonsByCourse, createLesson, updateLesson, deleteLesson, publishLesson, getCourseById } from '@/lib/api';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 export default function LessonManagementPage() {
   const { courseId } = useParams();
@@ -129,32 +130,34 @@ export default function LessonManagementPage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.15),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.1),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <section className='relative mx-auto max-w-5xl space-y-6'>
-        <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
-          <CardHeader className='flex flex-row items-center justify-between'>
-            <div>
-              <CardTitle className='text-2xl'>Manage Lessons</CardTitle>
-              <CardDescription className='text-[#9CA3AF]'>
-                {course ? `Course: ${course.title}` : 'Lessons configuration'}
-              </CardDescription>
-            </div>
-            <div className='flex gap-2'>
-              <Link to='/instructor/my-courses'>
-                <Button variant='outline' className='border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] text-white hover:bg-[rgba(255,255,255,0.1)]'>
-                  Back
+        <ParallaxTilt max={8} hoverScale={1.01}>
+          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
+            <CardHeader className='flex flex-row items-center justify-between'>
+              <div>
+                <CardTitle className='text-2xl'>Manage Lessons</CardTitle>
+                <CardDescription className='text-[#9CA3AF]'>
+                  {course ? `Course: ${course.title}` : 'Lessons configuration'}
+                </CardDescription>
+              </div>
+              <div className='flex gap-2'>
+                <Link to='/instructor/my-courses'>
+                  <Button variant='outline' className='border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] text-white hover:bg-[rgba(255,255,255,0.1)]'>
+                    Back
+                  </Button>
+                </Link>
+                <Button 
+                  onClick={() => handleOpenModal()}
+                  className='bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white hover:opacity-90 transition-opacity'
+                >
+                  + Add Lesson
                 </Button>
-              </Link>
-              <Button 
-                onClick={() => handleOpenModal()}
-                className='bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white hover:opacity-90 transition-opacity'
-              >
-                + Add Lesson
-              </Button>
-            </div>
-          </CardHeader>
-        </Card>
+              </div>
+            </CardHeader>
+          </Card>
+        </ParallaxTilt>
 
         {error && (
           <Alert variant='destructive' className='border-[rgba(239,68,68,0.5)] bg-[rgba(239,68,68,0.1)] text-red-100'>
@@ -165,64 +168,68 @@ export default function LessonManagementPage() {
 
         <div className='grid gap-4'>
           {lessons.length === 0 ? (
-            <Card className='border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] backdrop-blur-md'>
-              <CardContent className='pt-6 text-center text-[#9CA3AF]'>
-                No lessons found for this course. Start by adding one.
-              </CardContent>
-            </Card>
-          ) : (
-            lessons.map((lesson) => (
-              <Card key={lesson._id} className='border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] backdrop-blur-md hover:bg-[rgba(255,255,255,0.06)] transition-all'>
-                <CardContent className='flex items-center justify-between p-4'>
-                  <div className='space-y-1 w-2/3'>
-                    <div className='flex items-center gap-2'>
-                      <span className='font-mono text-sm text-[#8B5CF6]'>#{lesson.order}</span>
-                      <h4 className='font-semibold text-lg text-white truncate'>{lesson.title}</h4>
-                      <span className='rounded bg-[rgba(34,211,238,0.1)] px-2 py-0.5 text-xs font-medium text-[#22D3EE] uppercase'>
-                        {lesson.type}
-                      </span>
-                      {lesson.isPublished ? (
-                        <span className='rounded bg-[rgba(34,197,94,0.1)] px-2 py-0.5 text-xs font-medium text-green-400'>Published</span>
-                      ) : (
-                        <span className='rounded bg-[rgba(239,68,68,0.1)] px-2 py-0.5 text-xs font-medium text-red-400'>Draft</span>
-                      )}
-                    </div>
-                    <p className='text-sm text-[#9CA3AF] line-clamp-1'>{lesson.description || 'No description'}</p>
-                    <p className='text-xs text-[#6B7280] truncate'>URL: {lesson.contentUrl}</p>
-                  </div>
-                  
-                  <div className='flex items-center gap-3'>
-                    <div className='flex flex-col items-center gap-1 mr-4 border-r border-[rgba(255,255,255,0.1)] pr-4'>
-                      <Label htmlFor={`publish-${lesson._id}`} className='text-xs text-[#9CA3AF] cursor-pointer'>
-                        {lesson.isPublished ? 'Unpublish' : 'Publish'}
-                      </Label>
-                      <Switch 
-                        id={`publish-${lesson._id}`}
-                        checked={lesson.isPublished} 
-                        onCheckedChange={() => handlePublishToggle(lesson._id, lesson.isPublished)}
-                        className='data-[state=checked]:bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)]'
-                      />
-                    </div>
-                    
-                    <Button 
-                      variant='outline' 
-                      size='sm'
-                      onClick={() => handleOpenModal(lesson)}
-                      className='border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.05)] text-[#22D3EE] hover:bg-[rgba(34,211,238,0.1)]'
-                    >
-                      Edit
-                    </Button>
-                    <Button 
-                      variant='outline' 
-                      size='sm'
-                      onClick={() => handleDeleteLesson(lesson._id)}
-                      className='border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.05)] text-red-400 hover:bg-[rgba(239,68,68,0.1)]'
-                    >
-                      Delete
-                    </Button>
-                  </div>
+            <ParallaxTilt max={6} hoverScale={1.01}>
+              <Card className='border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] backdrop-blur-md'>
+                <CardContent className='pt-6 text-center text-[#9CA3AF]'>
+                  No lessons found for this course. Start by adding one.
                 </CardContent>
               </Card>
+            </ParallaxTilt>
+          ) : (
+            lessons.map((lesson) => (
+              <ParallaxTilt key={lesson._id} max={6} hoverScale={1.01}>
+                <Card className='border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] backdrop-blur-md hover:bg-[rgba(255,255,255,0.06)] transition-all'>
+                  <CardContent className='flex items-center justify-between p-4'>
+                    <div className='space-y-1 w-2/3'>
+                      <div className='flex items-center gap-2'>
+                        <span className='font-mono text-sm text-[#8B5CF6]'>#{lesson.order}</span>
+                        <h4 className='font-semibold text-lg text-white truncate'>{lesson.title}</h4>
+                        <span className='rounded bg-[rgba(34,211,238,0.1)] px-2 py-0.5 text-xs font-medium text-[#22D3EE] uppercase'>
+                          {lesson.type}
+                        </span>
+                        {lesson.isPublished ? (
+                          <span className='rounded bg-[rgba(34,197,94,0.1)] px-2 py-0.5 text-xs font-medium text-green-400'>Published</span>
+                        ) : (
+                          <span className='rounded bg-[rgba(239,68,68,0.1)] px-2 py-0.5 text-xs font-medium text-red-400'>Draft</span>
+                        )}
+                      </div>
+                      <p className='text-sm text-[#9CA3AF] line-clamp-1'>{lesson.description || 'No description'}</p>
+                      <p className='text-xs text-[#6B7280] truncate'>URL: {lesson.contentUrl}</p>
+                    </div>
+                    
+                    <div className='flex items-center gap-3'>
+                      <div className='flex flex-col items-center gap-1 mr-4 border-r border-[rgba(255,255,255,0.1)] pr-4'>
+                        <Label htmlFor={`publish-${lesson._id}`} className='text-xs text-[#9CA3AF] cursor-pointer'>
+                          {lesson.isPublished ? 'Unpublish' : 'Publish'}
+                        </Label>
+                        <Switch 
+                          id={`publish-${lesson._id}`}
+                          checked={lesson.isPublished} 
+                          onCheckedChange={() => handlePublishToggle(lesson._id, lesson.isPublished)}
+                          className='data-[state=checked]:bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)]'
+                        />
+                      </div>
+                      
+                      <Button 
+                        variant='outline' 
+                        size='sm'
+                        onClick={() => handleOpenModal(lesson)}
+                        className='border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.05)] text-[#22D3EE] hover:bg-[rgba(34,211,238,0.1)]'
+                      >
+                        Edit
+                      </Button>
+                      <Button 
+                        variant='outline' 
+                        size='sm'
+                        onClick={() => handleDeleteLesson(lesson._id)}
+                        className='border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.05)] text-red-400 hover:bg-[rgba(239,68,68,0.1)]'
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </ParallaxTilt>
             ))
           )}
         </div>

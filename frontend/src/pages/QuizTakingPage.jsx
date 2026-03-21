@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getQuizByCourse, submitQuiz } from '@/lib/api';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 // ─── Timer ────────────────────────────────────────────────────────────────────
 
@@ -37,7 +38,8 @@ function QuestionCard({ question, questionIndex, totalQuestions, answers, onAnsw
   }
 
   return (
-    <div className='rounded-2xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl p-6 sm:p-8'>
+    <ParallaxTilt max={8} hoverScale={1.01}>
+      <div className='rounded-2xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl p-6 sm:p-8'>
       {/* question header */}
       <div className='flex items-start justify-between gap-4 mb-6'>
         <div className='flex items-start gap-3'>
@@ -95,7 +97,8 @@ function QuestionCard({ question, questionIndex, totalQuestions, answers, onAnsw
           );
         })}
       </div>
-    </div>
+      </div>
+    </ParallaxTilt>
   );
 }
 
@@ -244,18 +247,21 @@ export default function QuizTakingPage() {
   return (
     <div className='min-h-screen bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)]'>
       {/* Ambient glows */}
-      <div className='pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.1),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.12),transparent_40%)]' />
+      <div className='pointer-events-none fixed inset-0 ambient-blobs' />
 
       {/* ── Navbar ── */}
       <nav className='relative z-20 flex items-center justify-between border-b border-[rgba(255,255,255,0.07)] bg-[rgba(11,15,26,0.85)] backdrop-blur-xl px-4 sm:px-6 py-3'>
         <div className='flex items-center gap-3'>
-          <Link to='/courses' className='flex items-center gap-2'>
-            <div className='flex h-7 w-7 items-center justify-center rounded-lg bg-[linear-gradient(135deg,#3B82F6,#8B5CF6)]'>
-              <svg className='h-3.5 w-3.5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-              </svg>
+          <Link to='/courses' className='flex items-center gap-3 rounded-full border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.04)] px-4 py-2 text-[#E5E7EB] shadow-[0_0_14px_rgba(59,130,246,0.25)]'>
+            <img
+              src='/Logo.jpeg'
+              alt='LearnNova logo'
+              className='h-10 w-10 rounded-xl bg-white/70 p-1 object-contain shadow-[0_0_18px_rgba(34,211,238,0.55)] ring-[0.5px] ring-[rgba(59,130,246,0.3)] brightness-110 contrast-110'
+            />
+            <div className='hidden sm:block'>
+              <p className='font-heading text-[11px] uppercase tracking-[0.28em] text-[#93C5FD]'>LearnNova</p>
+              <p className='text-[10px] text-[#9CA3AF]'>Neon Frost OS</p>
             </div>
-            <span className='text-sm font-bold text-[#E5E7EB] hidden sm:block'>LearnNova</span>
           </Link>
           <span className='text-[rgba(255,255,255,0.2)] hidden sm:block'>›</span>
           <span className='text-sm font-semibold text-[#A78BFA] hidden sm:block'>📝 Quiz</span>

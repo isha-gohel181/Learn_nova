@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { getMyReviews } from '@/lib/api';
 import { ArrowLeft, Star, Edit3, MessageSquareText } from 'lucide-react';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 export default function MyReviewsPage() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function MyReviewsPage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <section className='relative mx-auto max-w-6xl space-y-6'>
         <div className='flex items-center gap-4 mb-8'>
@@ -77,55 +78,62 @@ export default function MyReviewsPage() {
         )}
 
         <div className='grid grid-cols-1 gap-6 md:grid-cols-3 mb-8'>
-          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl'>
-            <CardHeader className='pb-2'>
-              <CardDescription className='text-[#9CA3AF] flex items-center gap-2'>
-                <MessageSquareText className='w-4 h-4 text-blue-400' />
-                Total Reviews
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className='text-3xl font-bold text-[#E5E7EB]'>{reviews.length}</div>
-            </CardContent>
-          </Card>
+          <ParallaxTilt max={8} hoverScale={1.015}>
+            <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl'>
+              <CardHeader className='pb-2'>
+                <CardDescription className='text-[#9CA3AF] flex items-center gap-2'>
+                  <MessageSquareText className='w-4 h-4 text-blue-400' />
+                  Total Reviews
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='text-3xl font-bold text-[#E5E7EB]'>{reviews.length}</div>
+              </CardContent>
+            </Card>
+          </ParallaxTilt>
           
-          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl'>
-            <CardHeader className='pb-2'>
-              <CardDescription className='text-[#9CA3AF] flex items-center gap-2'>
-                <Star className='w-4 h-4 text-yellow-400' />
-                Average Rating Given
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className='text-3xl font-bold text-[#E5E7EB]'>{averageRating}</div>
-            </CardContent>
-          </Card>
+          <ParallaxTilt max={8} hoverScale={1.015}>
+            <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl'>
+              <CardHeader className='pb-2'>
+                <CardDescription className='text-[#9CA3AF] flex items-center gap-2'>
+                  <Star className='w-4 h-4 text-yellow-400' />
+                  Average Rating Given
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='text-3xl font-bold text-[#E5E7EB]'>{averageRating}</div>
+              </CardContent>
+            </Card>
+          </ParallaxTilt>
         </div>
 
-        <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl mt-8'>
-          <CardHeader>
-            <CardTitle className='text-xl text-[#E5E7EB]'>Your Submitted Reviews</CardTitle>
-            <CardDescription className='text-[#9CA3AF]'>Feedback you've left for instructors and fellow learners</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {reviews.length === 0 ? (
-              <div className='text-center py-12 bg-[rgba(255,255,255,0.02)] rounded-lg border border-[rgba(255,255,255,0.05)]'>
-                <Star className='w-12 h-12 text-[#4B5563] mx-auto mb-4 opacity-50' />
-                <p className='text-[#9CA3AF] text-lg'>You haven't submitted any reviews yet.</p>
-                <p className='text-[#6B7280] text-sm mt-2'>Complete courses and share your experiences to help others!</p>
-                <Link to='/progress'>
-                  <Button className='mt-6 bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] hover:opacity-90'>
-                    View Completed Courses
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                {reviews.map((review) => (
-                  <div
-                    key={review._id}
-                    className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] p-5 transition-all hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(139,92,246,0.4)] flex flex-col justify-between group h-full'
-                  >
+        <ParallaxTilt max={6} hoverScale={1.01}>
+          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl mt-8'>
+            <CardHeader>
+              <CardTitle className='text-xl text-[#E5E7EB]'>Your Submitted Reviews</CardTitle>
+              <CardDescription className='text-[#9CA3AF]'>Feedback you've left for instructors and fellow learners</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reviews.length === 0 ? (
+                <div className='text-center py-12 bg-[rgba(255,255,255,0.02)] rounded-lg border border-[rgba(255,255,255,0.05)]'>
+                  <Star className='w-12 h-12 text-[#4B5563] mx-auto mb-4 opacity-50' />
+                  <p className='text-[#9CA3AF] text-lg'>You haven't submitted any reviews yet.</p>
+                  <p className='text-[#6B7280] text-sm mt-2'>Complete courses and share your experiences to help others!</p>
+                  <Link to='/progress'>
+                    <Button className='mt-6 bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] hover:opacity-90'>
+                      View Completed Courses
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {reviews.map((review) => (
+                    <ParallaxTilt
+                      key={review._id}
+                      className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] p-5 transition-all hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(139,92,246,0.4)] flex flex-col justify-between group h-full'
+                      max={8}
+                      hoverScale={1.01}
+                    >
                     <div>
                       <div className='flex justify-between items-start mb-4'>
                         <div className='flex flex-col gap-1'>
@@ -160,12 +168,13 @@ export default function MyReviewsPage() {
                         </Button>
                       </Link>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    </ParallaxTilt>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </ParallaxTilt>
       </section>
     </main>
   );

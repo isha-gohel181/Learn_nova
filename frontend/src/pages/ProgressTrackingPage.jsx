@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getAllProgress, getProgressStats } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, BookOpen, Clock, Target, CheckCircle } from 'lucide-react';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 export default function ProgressTrackingPage() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ export default function ProgressTrackingPage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <section className='relative mx-auto max-w-6xl space-y-6'>
         <div className='flex items-center gap-4 mb-8'>
@@ -88,45 +89,51 @@ export default function ProgressTrackingPage() {
 
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
           {statCards.map((item) => (
-            <Card
+            <ParallaxTilt
               key={item.label}
-              className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl relative overflow-hidden group'
+              max={8}
+              hoverScale={1.015}
             >
-              <div className='absolute inset-0 bg-[linear-gradient(180deg,rgba(59,130,246,0.1)_0%,transparent_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-              <CardHeader className='flex flex-row items-center justify-between pb-2'>
-                <CardDescription className='text-[#9CA3AF] font-medium'>{item.label}</CardDescription>
-                {item.icon}
-              </CardHeader>
-              <CardContent>
-                <div className='text-3xl font-bold text-[#E5E7EB]'>{item.value}</div>
-              </CardContent>
-            </Card>
+              <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl relative overflow-hidden group'>
+                <div className='absolute inset-0 bg-[linear-gradient(180deg,rgba(59,130,246,0.1)_0%,transparent_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                <CardHeader className='flex flex-row items-center justify-between pb-2'>
+                  <CardDescription className='text-[#9CA3AF] font-medium'>{item.label}</CardDescription>
+                  {item.icon}
+                </CardHeader>
+                <CardContent>
+                  <div className='text-3xl font-bold text-[#E5E7EB]'>{item.value}</div>
+                </CardContent>
+              </Card>
+            </ParallaxTilt>
           ))}
         </div>
 
-        <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl mt-8'>
-          <CardHeader>
-            <CardTitle className='text-xl text-[#E5E7EB]'>Course-wise Progress</CardTitle>
-            <CardDescription className='text-[#9CA3AF]'>Detailed view of your ongoing and completed courses</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {progressList.length === 0 ? (
-              <div className='text-center py-10 bg-[rgba(255,255,255,0.02)] rounded-lg border border-[rgba(255,255,255,0.05)]'>
-                <BookOpen className='w-12 h-12 text-[#4B5563] mx-auto mb-3' />
-                <p className='text-[#9CA3AF]'>You haven't enrolled in any courses yet.</p>
-                <Link to='/courses'>
-                  <Button className='mt-4 bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] hover:opacity-90'>
-                    Explore Courses
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className='space-y-4'>
-                {progressList.map((progress) => (
-                  <div
-                    key={progress._id}
-                    className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] p-5 transition-all hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(59,130,246,0.4)] flex flex-col sm:flex-row gap-5 items-start sm:items-center'
-                  >
+        <ParallaxTilt max={8} hoverScale={1.01}>
+          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] backdrop-blur-xl mt-8'>
+            <CardHeader>
+              <CardTitle className='text-xl text-[#E5E7EB]'>Course-wise Progress</CardTitle>
+              <CardDescription className='text-[#9CA3AF]'>Detailed view of your ongoing and completed courses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {progressList.length === 0 ? (
+                <div className='text-center py-10 bg-[rgba(255,255,255,0.02)] rounded-lg border border-[rgba(255,255,255,0.05)]'>
+                  <BookOpen className='w-12 h-12 text-[#4B5563] mx-auto mb-3' />
+                  <p className='text-[#9CA3AF]'>You haven't enrolled in any courses yet.</p>
+                  <Link to='/courses'>
+                    <Button className='mt-4 bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] hover:opacity-90'>
+                      Explore Courses
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className='space-y-4'>
+                  {progressList.map((progress) => (
+                    <ParallaxTilt
+                      key={progress._id}
+                      className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] p-5 transition-all hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(59,130,246,0.4)] flex flex-col sm:flex-row gap-5 items-start sm:items-center'
+                      max={8}
+                      hoverScale={1.01}
+                    >
                     <div className='flex-1 w-full'>
                       <div className='flex items-center justify-between mb-2'>
                         <h3 className='font-semibold text-lg text-[#E5E7EB] pr-4'>{progress.courseId?.title || 'Unknown Course'}</h3>
@@ -177,12 +184,13 @@ export default function ProgressTrackingPage() {
                           </Link>
                         )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    </ParallaxTilt>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </ParallaxTilt>
       </section>
     </main>
   );

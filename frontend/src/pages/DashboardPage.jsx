@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Activity, BookOpen, LayoutDashboard, Settings } from 'lucide-react';
+import ParallaxTilt from '@/components/ParallaxTilt';
 import {
   getInstructorCourses,
   getInstructorDashboardReport,
@@ -124,11 +127,34 @@ export default function DashboardPage() {
     ];
   }, [dashboardData, profile?.role]);
 
+  const learnerContinue = dashboardData?.courseProgress?.[0];
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.45, ease: 'easeOut', staggerChildren: 0.06 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+  };
+
   function handleLogout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUser');
     navigate('/login', { replace: true });
   }
+
+  const navItems = [
+    { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+    { label: 'My Courses', to: '/courses', icon: BookOpen },
+    { label: 'Progress', to: '/progress', icon: Activity },
+    { label: 'Settings', to: '/dashboard', icon: Settings },
+  ];
 
   if (loading) {
     return (
@@ -140,49 +166,96 @@ export default function DashboardPage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
-      <section className='relative mx-auto max-w-6xl space-y-6'>
-        <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
-          <CardHeader className='flex flex-row items-start justify-between'>
-            <div className='space-y-2'>
-              <CardTitle className='text-2xl'>Welcome, {profile?.name || 'User'}</CardTitle>
-              <CardDescription className='text-[#9CA3AF]'>
-                Role-aware dashboard from backend endpoints ({profile?.role || 'unknown'})
-              </CardDescription>
+      <section className='relative mx-auto max-w-7xl lg:grid lg:grid-cols-[260px_1fr] gap-6'>
+        <aside className='glass-panel h-fit rounded-2xl p-4 lg:sticky lg:top-8'>
+          <div className='flex items-center gap-3 rounded-2xl border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.04)] px-4 py-3 shadow-[0_0_18px_rgba(59,130,246,0.28)]'>
+            <img
+              src='/Logo.jpeg'
+              alt='LearnNova logo'
+              className='h-12 w-12 rounded-2xl bg-white/70 p-1 object-contain shadow-[0_0_20px_rgba(34,211,238,0.55)] ring-[0.5px] ring-[rgba(59,130,246,0.3)] brightness-110 contrast-110'
+            />
+            <div>
+              <p className='font-heading text-sm uppercase tracking-[0.28em] text-[#93C5FD]'>LearnNova</p>
+              <p className='text-xs text-[#9CA3AF]'>Neon Frost Dashboard</p>
             </div>
-            <div className='flex items-center gap-3'>
-              <Badge className='bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white'>
-                {profile?.role || 'user'}
-              </Badge>
-              {profile?.role === 'instructor' && (
-                <Link to='/instructor/my-courses'>
+          </div>
+
+          <div className='mt-4 flex items-center gap-3 rounded-xl border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.04)] px-4 py-3 shadow-[0_0_16px_rgba(59,130,246,0.2)]'>
+            <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-[linear-gradient(135deg,#3B82F6,#8B5CF6)] text-white text-sm font-semibold'>
+              {profile?.name?.[0]?.toUpperCase() || 'U'}
+            </div>
+            <div>
+              <p className='text-sm font-semibold text-[#E5E7EB]'>{profile?.name || 'Your Space'}</p>
+              <p className='text-xs text-[#9CA3AF]'>{profile?.role || 'member'} portal</p>
+            </div>
+          </div>
+
+          <nav className='mt-5 space-y-2'>
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className='flex items-center gap-3 rounded-xl border border-transparent bg-[rgba(255,255,255,0.02)] px-3 py-2 text-sm text-[#D1D5DB] hover:border-[rgba(59,130,246,0.35)] hover:bg-[rgba(59,130,246,0.12)] hover:text-white transition-all'
+                >
+                  <Icon className='h-4 w-4 text-[#93C5FD]' />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className='mt-6 rounded-xl border border-[rgba(139,92,246,0.35)] bg-[rgba(139,92,246,0.08)] px-4 py-3 text-xs text-[#C4B5FD]'>
+            Neon Frost OS · premium learning cockpit
+          </div>
+        </aside>
+
+        <motion.div variants={containerVariants} initial='hidden' animate='show' className='space-y-6'>
+          <motion.div variants={itemVariants}>
+            <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
+              <CardHeader className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                <div className='space-y-2'>
+                  <CardTitle className='text-3xl leading-tight'>Welcome, {profile?.name || 'User'}</CardTitle>
+                  <CardDescription className='text-[#9CA3AF]'>
+                    Role-aware dashboard from backend endpoints ({profile?.role || 'unknown'})
+                  </CardDescription>
+                </div>
+                <div className='flex flex-wrap items-center gap-3'>
+                  <Badge className='bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white'>
+                    {profile?.role || 'user'}
+                  </Badge>
+                  {profile?.role === 'instructor' && (
+                    <Link to='/instructor/my-courses'>
+                      <Button
+                        variant='outline'
+                        className='border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.05)] text-[#A78BFA] hover:bg-[rgba(139,92,246,0.1)]'
+                      >
+                        Manage Courses
+                      </Button>
+                    </Link>
+                  )}
+                  <Link to='/courses'>
+                    <Button
+                      variant='outline'
+                      className='border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.05)] text-[#22D3EE] hover:bg-[rgba(34,211,238,0.1)]'
+                    >
+                      Browse Courses
+                    </Button>
+                  </Link>
                   <Button
                     variant='outline'
-                    className='border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.05)] text-[#A78BFA] hover:bg-[rgba(139,92,246,0.1)]'
+                    className='border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] hover:bg-[rgba(255,255,255,0.08)]'
+                    onClick={handleLogout}
                   >
-                    Manage Courses
+                    Logout
                   </Button>
-                </Link>
-              )}
-              <Link to='/courses'>
-                <Button
-                  variant='outline'
-                  className='border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.05)] text-[#22D3EE] hover:bg-[rgba(34,211,238,0.1)]'
-                >
-                  Browse Courses
-                </Button>
-              </Link>
-              <Button
-                variant='outline'
-                className='border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] hover:bg-[rgba(255,255,255,0.08)]'
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            </div>
-          </CardHeader>
-        </Card>
+                </div>
+              </CardHeader>
+            </Card>
+          </motion.div>
 
         {error ? (
           <Alert variant='destructive'>
@@ -191,19 +264,50 @@ export default function DashboardPage() {
           </Alert>
         ) : null}
 
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5'>
-          {stats.map((item) => (
-            <Card
-              key={item.label}
-              className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'
-            >
-              <CardHeader>
-                <CardDescription className='text-[#9CA3AF]'>{item.label}</CardDescription>
-                <CardTitle className='text-2xl text-[#E5E7EB]'>{item.value}</CardTitle>
+        {profile?.role === 'learner' && learnerContinue ? (
+          <motion.div variants={itemVariants}>
+            <ParallaxTilt max={10} hoverScale={1.02}>
+              <Card className='border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.08)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
+              <CardHeader className='flex flex-row items-center justify-between'>
+                <div>
+                  <CardTitle className='text-xl'>Continue Learning</CardTitle>
+                  <CardDescription className='text-[#9CA3AF]'>Pick up where you left off</CardDescription>
+                </div>
+                <Badge className='bg-[rgba(34,211,238,0.2)] text-[#22D3EE] border-[rgba(34,211,238,0.3)]'>
+                  {learnerContinue.progressPercent || 0}% complete
+                </Badge>
               </CardHeader>
-            </Card>
+              <CardContent className='space-y-4'>
+                <p className='text-lg font-semibold text-[#E5E7EB]'>
+                  {learnerContinue.courseId?.title || 'Your course'}
+                </p>
+                <Progress
+                  value={learnerContinue.progressPercent || 0}
+                  className='h-2 bg-[rgba(255,255,255,0.12)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)]'
+                />
+                <Link to={`/learn/${learnerContinue.courseId?._id}`}>
+                  <Button className='bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] text-white shadow-[0_0_22px_rgba(59,130,246,0.4)]'>
+                    Resume Lesson
+                  </Button>
+                </Link>
+              </CardContent>
+              </Card>
+            </ParallaxTilt>
+          </motion.div>
+        ) : null}
+
+        <motion.div variants={itemVariants} className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5'>
+          {stats.map((item) => (
+            <ParallaxTilt key={item.label} variants={itemVariants} max={8} hoverScale={1.015}>
+              <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
+                <CardHeader>
+                  <CardDescription className='text-[#9CA3AF]'>{item.label}</CardDescription>
+                  <CardTitle className='text-2xl text-[#E5E7EB]'>{item.value}</CardTitle>
+                </CardHeader>
+              </Card>
+            </ParallaxTilt>
           ))}
-        </div>
+        </motion.div>
 
         {profile?.role === 'instructor' && dashboardData?.summary ? (
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
@@ -340,9 +444,11 @@ export default function DashboardPage() {
             <CardContent>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
                 {dashboardData.courseProgress.map((enrolled) => (
-                  <div
+                  <ParallaxTilt
                     key={enrolled._id}
-                    className='relative overflow-hidden rounded-[16px] border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] flex flex-col transition-all hover:bg-[rgba(255,255,255,0.05)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:-translate-y-1'
+                    className='relative overflow-hidden rounded-[16px] border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] flex flex-col transition-all hover:bg-[rgba(255,255,255,0.05)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
+                    max={10}
+                    hoverScale={1.02}
                   >
                     <div className='flex items-center gap-3 p-4 border-b border-[rgba(255,255,255,0.05)] bg-[linear-gradient(90deg,rgba(139,92,246,0.1),transparent)]'>
                        <div className="w-10 h-10 rounded-lg bg-[rgba(139,92,246,0.2)] flex items-center justify-center text-[#A78BFA] border border-[rgba(139,92,246,0.3)] shadow-[0_0_10px_rgba(139,92,246,0.2)]">
@@ -369,7 +475,7 @@ export default function DashboardPage() {
                          </Button>
                        </Link>
                     </div>
-                  </div>
+                  </ParallaxTilt>
                 ))}
               </div>
             </CardContent>
@@ -413,6 +519,7 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+        </motion.div>
       </section>
     </main>
   );

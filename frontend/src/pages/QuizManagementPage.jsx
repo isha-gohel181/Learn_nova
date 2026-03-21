@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getQuizByCourse, createQuiz, updateQuiz, publishQuiz, getCourseById } from '@/lib/api';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 export default function QuizManagementPage() {
   const { courseId } = useParams();
@@ -151,39 +152,41 @@ export default function QuizManagementPage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.15),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.1),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <section className='relative mx-auto max-w-4xl space-y-6'>
-        <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
-          <CardHeader className='flex flex-row items-center justify-between'>
-            <div>
-              <CardTitle className='text-2xl'>Quiz Management</CardTitle>
-              <CardDescription className='text-[#9CA3AF]'>
-                {course ? `Build the quiz for: ${course.title}` : 'Configure quiz parameters and questions'}
-              </CardDescription>
-            </div>
-            <div className='flex gap-2 items-center'>
-              {quizExists && (
-                <div className='flex items-center gap-2 mr-4 border-r border-[rgba(255,255,255,0.1)] pr-4'>
-                  <Label htmlFor='publish-quiz' className='text-sm text-white cursor-pointer'>
-                    {isPublished ? 'Published' : 'Draft'}
-                  </Label>
-                  <Switch 
-                    id='publish-quiz'
-                    checked={isPublished} 
-                    onCheckedChange={handlePublishToggle}
-                    className='data-[state=checked]:bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)]'
-                  />
-                </div>
-              )}
-              <Link to='/instructor/my-courses'>
-                <Button variant='outline' className='border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] text-white hover:bg-[rgba(255,255,255,0.1)]'>
-                  Back
-                </Button>
-              </Link>
-            </div>
-          </CardHeader>
-        </Card>
+        <ParallaxTilt max={8} hoverScale={1.01}>
+          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
+            <CardHeader className='flex flex-row items-center justify-between'>
+              <div>
+                <CardTitle className='text-2xl'>Quiz Management</CardTitle>
+                <CardDescription className='text-[#9CA3AF]'>
+                  {course ? `Build the quiz for: ${course.title}` : 'Configure quiz parameters and questions'}
+                </CardDescription>
+              </div>
+              <div className='flex gap-2 items-center'>
+                {quizExists && (
+                  <div className='flex items-center gap-2 mr-4 border-r border-[rgba(255,255,255,0.1)] pr-4'>
+                    <Label htmlFor='publish-quiz' className='text-sm text-white cursor-pointer'>
+                      {isPublished ? 'Published' : 'Draft'}
+                    </Label>
+                    <Switch 
+                      id='publish-quiz'
+                      checked={isPublished} 
+                      onCheckedChange={handlePublishToggle}
+                      className='data-[state=checked]:bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)]'
+                    />
+                  </div>
+                )}
+                <Link to='/instructor/my-courses'>
+                  <Button variant='outline' className='border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] text-white hover:bg-[rgba(255,255,255,0.1)]'>
+                    Back
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+          </Card>
+        </ParallaxTilt>
 
         {error && (
           <Alert variant='destructive' className='border-[rgba(239,68,68,0.5)] bg-[rgba(239,68,68,0.1)] text-red-100'>
@@ -201,63 +204,65 @@ export default function QuizManagementPage() {
 
         <form onSubmit={handleSaveQuiz} className='space-y-6'>
           {/* General Settings */}
-          <Card className='border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] backdrop-blur-md'>
-            <CardHeader>
-              <CardTitle className='text-lg text-white'>General Settings</CardTitle>
-            </CardHeader>
-            <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-              <div className='space-y-2'>
-                <Label htmlFor='passingScore' className='text-white'>Passing Score (%)</Label>
-                <Input 
-                  id='passingScore'
-                  type='number' min='1' max='100'
-                  value={passingScore}
-                  onChange={(e) => setPassingScore(Number(e.target.value))}
-                  className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
-                  required
-                />
-              </div>
+          <ParallaxTilt max={6} hoverScale={1.01}>
+            <Card className='border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] backdrop-blur-md'>
+              <CardHeader>
+                <CardTitle className='text-lg text-white'>General Settings</CardTitle>
+              </CardHeader>
+              <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='space-y-2'>
+                  <Label htmlFor='passingScore' className='text-white'>Passing Score (%)</Label>
+                  <Input 
+                    id='passingScore'
+                    type='number' min='1' max='100'
+                    value={passingScore}
+                    onChange={(e) => setPassingScore(Number(e.target.value))}
+                    className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
+                    required
+                  />
+                </div>
 
-              <div className='grid grid-cols-2 gap-4'>
-                <div className='space-y-2'>
-                  <Label className='text-white'>1st Try Reward</Label>
-                  <Input 
-                    type='number' min='0'
-                    value={rewards.first}
-                    onChange={(e) => setRewards({...rewards, first: Number(e.target.value)})}
-                    className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
-                  />
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='space-y-2'>
+                    <Label className='text-white'>1st Try Reward</Label>
+                    <Input 
+                      type='number' min='0'
+                      value={rewards.first}
+                      onChange={(e) => setRewards({...rewards, first: Number(e.target.value)})}
+                      className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
+                    />
+                  </div>
+                  <div className='space-y-2'>
+                    <Label className='text-white'>2nd Try Reward</Label>
+                    <Input 
+                      type='number' min='0'
+                      value={rewards.second}
+                      onChange={(e) => setRewards({...rewards, second: Number(e.target.value)})}
+                      className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
+                    />
+                  </div>
+                  <div className='space-y-2'>
+                    <Label className='text-white'>3rd Try Reward</Label>
+                    <Input 
+                      type='number' min='0'
+                      value={rewards.third}
+                      onChange={(e) => setRewards({...rewards, third: Number(e.target.value)})}
+                      className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
+                    />
+                  </div>
+                  <div className='space-y-2'>
+                    <Label className='text-white'>4th Try Reward</Label>
+                    <Input 
+                      type='number' min='0'
+                      value={rewards.fourth}
+                      onChange={(e) => setRewards({...rewards, fourth: Number(e.target.value)})}
+                      className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
+                    />
+                  </div>
                 </div>
-                <div className='space-y-2'>
-                  <Label className='text-white'>2nd Try Reward</Label>
-                  <Input 
-                    type='number' min='0'
-                    value={rewards.second}
-                    onChange={(e) => setRewards({...rewards, second: Number(e.target.value)})}
-                    className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label className='text-white'>3rd Try Reward</Label>
-                  <Input 
-                    type='number' min='0'
-                    value={rewards.third}
-                    onChange={(e) => setRewards({...rewards, third: Number(e.target.value)})}
-                    className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label className='text-white'>4th Try Reward</Label>
-                  <Input 
-                    type='number' min='0'
-                    value={rewards.fourth}
-                    onChange={(e) => setRewards({...rewards, fourth: Number(e.target.value)})}
-                    className='border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] text-white focus:border-[#3B82F6]'
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </ParallaxTilt>
 
           {/* Questions */}
           <div className='space-y-4'>

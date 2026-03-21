@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ParallaxTilt from '@/components/ParallaxTilt';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -57,87 +58,89 @@ function CourseCard({ course }) {
 
   return (
     <Link to={`/courses/${course._id}`} className='group block h-full focus:outline-none'>
-      <Card className='h-full overflow-hidden border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] backdrop-blur-xl ring-0 transition-all duration-300 hover:border-[rgba(59,130,246,0.5)] hover:bg-[rgba(255,255,255,0.07)] hover:shadow-[0_0_28px_rgba(59,130,246,0.25)] group-focus:ring-2 group-focus:ring-[rgba(139,92,246,0.6)]'>
-        {/* thumbnail */}
-        <div className='relative h-40 w-full overflow-hidden bg-[rgba(15,23,42,0.6)]'>
-          {mediaUrl ? (
-            showVideo ? (
-              <video
-                src={mediaUrl}
-                className='h-full w-full object-cover'
-                muted
-                playsInline
-                loop
-                autoPlay
-              />
+      <ParallaxTilt className='h-full' max={14} hoverScale={1.03}>
+        <Card className='h-full overflow-hidden border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] backdrop-blur-xl ring-0 transition-all duration-300 hover:border-[rgba(59,130,246,0.5)] hover:bg-[rgba(255,255,255,0.07)] hover:shadow-[0_0_28px_rgba(59,130,246,0.25)] group-focus:ring-2 group-focus:ring-[rgba(139,92,246,0.6)]'>
+          {/* thumbnail */}
+          <div className='relative h-40 w-full overflow-hidden bg-[rgba(15,23,42,0.6)]'>
+            {mediaUrl ? (
+              showVideo ? (
+                <video
+                  src={mediaUrl}
+                  className='h-full w-full object-cover'
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                />
+              ) : (
+                <img
+                  src={mediaUrl}
+                  alt={course.title}
+                  className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
+                />
+              )
             ) : (
-              <img
-                src={mediaUrl}
-                alt={course.title}
-                className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
-              />
-            )
-          ) : (
-            <div className='flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.15))]'>
-              <svg className='h-12 w-12 text-[rgba(139,92,246,0.4)]' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-              </svg>
-            </div>
-          )}
-          {/* access type pill */}
-          <span className={`absolute right-2 top-2 rounded-full border px-2 py-0.5 text-xs font-medium ${accessColour}`}>
-            {course.accessType === 'open' ? 'Free' : course.accessType === 'paid' ? `$${course.price}` : 'Invite'}
-          </span>
-        </div>
-
-        <CardHeader className='px-4 pt-3 pb-1 space-y-1'>
-          <CardTitle className='line-clamp-2 text-sm font-semibold leading-snug text-[#E5E7EB]'>
-            {course.title}
-          </CardTitle>
-          {instructor && (
-            <p className='text-xs text-[#9CA3AF]'>by {instructor.name || 'Unknown Instructor'}</p>
-          )}
-        </CardHeader>
-
-        <CardContent className='px-4 pb-4 space-y-3'>
-          <p className='line-clamp-2 text-xs text-[#9CA3AF] leading-relaxed'>{course.description}</p>
-
-          {/* rating row */}
-          <div className='flex items-center justify-between'>
-            <StarRating rating={course.averageRating || 0} />
-            <span className='text-xs text-[#9CA3AF]'>{course.reviewCount || 0} reviews</span>
-          </div>
-
-          {/* tags */}
-          {course.tags && course.tags.length > 0 && (
-            <div className='flex flex-wrap gap-1'>
-              {course.tags.slice(0, 3).map((tag) => (
-                <Badge
-                  key={tag}
-                  className='rounded-full border-[rgba(59,130,246,0.25)] bg-[rgba(59,130,246,0.1)] px-2 py-0 text-[10px] text-[#93C5FD]'
-                >
-                  {tag}
-                </Badge>
-              ))}
-              {course.tags.length > 3 && (
-                <Badge className='rounded-full border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-2 py-0 text-[10px] text-[#9CA3AF]'>
-                  +{course.tags.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
-
-          {/* enroll CTA */}
-          <div className='pt-1'>
-            <span className='inline-flex items-center gap-1.5 text-xs font-medium text-[#22D3EE] transition-colors group-hover:text-[#8B5CF6]'>
-              View course
-              <svg className='h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-              </svg>
+              <div className='flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.15))]'>
+                <svg className='h-12 w-12 text-[rgba(139,92,246,0.4)]' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
+                </svg>
+              </div>
+            )}
+            {/* access type pill */}
+            <span className={`absolute right-2 top-2 rounded-full border px-2 py-0.5 text-xs font-medium ${accessColour}`}>
+              {course.accessType === 'open' ? 'Free' : course.accessType === 'paid' ? `$${course.price}` : 'Invite'}
             </span>
           </div>
-        </CardContent>
-      </Card>
+
+          <CardHeader className='px-4 pt-3 pb-1 space-y-1'>
+            <CardTitle className='line-clamp-2 text-sm font-semibold leading-snug text-[#E5E7EB]'>
+              {course.title}
+            </CardTitle>
+            {instructor && (
+              <p className='text-xs text-[#9CA3AF]'>by {instructor.name || 'Unknown Instructor'}</p>
+            )}
+          </CardHeader>
+
+          <CardContent className='px-4 pb-4 space-y-3'>
+            <p className='line-clamp-2 text-xs text-[#9CA3AF] leading-relaxed'>{course.description}</p>
+
+            {/* rating row */}
+            <div className='flex items-center justify-between'>
+              <StarRating rating={course.averageRating || 0} />
+              <span className='text-xs text-[#9CA3AF]'>{course.reviewCount || 0} reviews</span>
+            </div>
+
+            {/* tags */}
+            {course.tags && course.tags.length > 0 && (
+              <div className='flex flex-wrap gap-1'>
+                {course.tags.slice(0, 3).map((tag) => (
+                  <Badge
+                    key={tag}
+                    className='rounded-full border-[rgba(59,130,246,0.25)] bg-[rgba(59,130,246,0.1)] px-2 py-0 text-[10px] text-[#93C5FD]'
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+                {course.tags.length > 3 && (
+                  <Badge className='rounded-full border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] px-2 py-0 text-[10px] text-[#9CA3AF]'>
+                    +{course.tags.length - 3}
+                  </Badge>
+                )}
+              </div>
+            )}
+
+            {/* enroll CTA */}
+            <div className='pt-1'>
+              <span className='inline-flex items-center gap-1.5 text-xs font-medium text-[#22D3EE] transition-colors group-hover:text-[#8B5CF6]'>
+                View course
+                <svg className='h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+                </svg>
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </ParallaxTilt>
     </Link>
   );
 }
@@ -145,7 +148,7 @@ function CourseCard({ course }) {
 // ─── skeleton card ────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
-    <div className='h-72 animate-pulse rounded-xl border border-[rgba(59,130,246,0.15)] bg-[rgba(255,255,255,0.03)]'>
+    <div className='h-72 animate-pulse rounded-xl border border-[rgba(59,130,246,0.15)] bg-[rgba(255,255,255,0.03)] neon-shimmer'>
       <div className='h-40 rounded-t-xl bg-[rgba(255,255,255,0.06)]' />
       <div className='space-y-3 p-4'>
         <div className='h-3 w-3/4 rounded bg-[rgba(255,255,255,0.08)]' />
@@ -225,19 +228,22 @@ export default function CourseCatalogPage() {
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)]'>
       {/* ambient background glows */}
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.18),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.1),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <div className='relative mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8'>
 
         {/* ── navbar ── */}
         <nav className='flex items-center justify-between py-5'>
-          <div className='flex items-center gap-2'>
-            <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-[linear-gradient(135deg,#3B82F6,#8B5CF6)]'>
-              <svg className='h-4 w-4 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-              </svg>
+          <div className='flex items-center gap-3 rounded-full border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.04)] px-4 py-2 text-[#E5E7EB] shadow-[0_0_14px_rgba(59,130,246,0.25)]'>
+            <img
+              src='/Logo.jpeg'
+              alt='LearnNova logo'
+              className='h-10 w-10 rounded-xl bg-white/70 p-1 object-contain shadow-[0_0_18px_rgba(34,211,238,0.55)] ring-[0.5px] ring-[rgba(59,130,246,0.3)] brightness-110 contrast-110'
+            />
+            <div>
+              <p className='font-heading text-[11px] uppercase tracking-[0.28em] text-[#93C5FD]'>LearnNova</p>
+              <p className='text-[10px] text-[#9CA3AF]'>Neon Frost OS</p>
             </div>
-            <span className='text-lg font-bold text-[#E5E7EB]'>LearnNova</span>
           </div>
 
           <div className='flex items-center gap-3'>

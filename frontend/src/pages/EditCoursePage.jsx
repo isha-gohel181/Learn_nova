@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Switch } from '@/components/ui/switch';
 import { getCourseById, updateCourse, API_BASE_URL } from '@/lib/api';
 import { ArrowLeft, Edit2, Trash2, MoreVertical } from 'lucide-react';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 function resolveMediaUrl(url) {
   if (!url) return '';
@@ -113,7 +114,7 @@ export default function EditCoursePage() {
   return (
     <div className='min-h-screen relative overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] flex flex-col font-sans text-[#E5E7EB] pb-24'>
       {/* ambient glows */}
-      <div className='pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_55%)]' />
+      <div className='pointer-events-none fixed inset-0 ambient-blobs' />
 
       <NavBar />
 
@@ -121,7 +122,8 @@ export default function EditCoursePage() {
       <main className='w-full max-w-[1200px] mx-auto mt-24 px-4 sm:px-6 relative z-10 flex-1'>
         
         {/* Top Control Bar */}
-        <div className='bg-[rgba(255,255,255,0.03)] shadow-[0_0_36px_rgba(59,130,246,0.1)] border border-[rgba(255,255,255,0.1)] backdrop-blur-xl rounded-xl overflow-hidden'>
+        <ParallaxTilt max={6} hoverScale={1.01}>
+          <div className='bg-[rgba(255,255,255,0.03)] shadow-[0_0_36px_rgba(59,130,246,0.1)] border border-[rgba(255,255,255,0.1)] backdrop-blur-xl rounded-xl overflow-hidden'>
           
           {/* Top border buttons (New) */}
           <div className='border-b border-[rgba(255,255,255,0.08)] px-4 py-2 flex items-center gap-2'>
@@ -208,19 +210,21 @@ export default function EditCoursePage() {
             </div>
 
             {/* Right Course Image Box */}
-            <div className='w-40 h-40 border-2 border-dashed border-[rgba(255,255,255,0.15)] rounded-lg flex flex-col items-center justify-center relative bg-[rgba(255,255,255,0.02)] shrink-0 text-[#9CA3AF]'>
-              <div className='absolute top-2 left-2 cursor-pointer hover:bg-[rgba(255,255,255,0.1)] p-1 rounded transition-colors'>
-                <Edit2 className='w-4 h-4 text-[#9CA3AF]' />
+            <ParallaxTilt max={10} hoverScale={1.02}>
+              <div className='w-40 h-40 border-2 border-dashed border-[rgba(255,255,255,0.15)] rounded-lg flex flex-col items-center justify-center relative bg-[rgba(255,255,255,0.02)] shrink-0 text-[#9CA3AF]'>
+                <div className='absolute top-2 left-2 cursor-pointer hover:bg-[rgba(255,255,255,0.1)] p-1 rounded transition-colors'>
+                  <Edit2 className='w-4 h-4 text-[#9CA3AF]' />
+                </div>
+                <div className='absolute top-2 right-2 cursor-pointer hover:bg-[rgba(255,255,255,0.1)] p-1 rounded transition-colors'>
+                  <Trash2 className='w-4 h-4 text-[#9CA3AF]' />
+                </div>
+                {formData.image ? (
+                  <img src={resolveMediaUrl(formData.image)} alt='Course' className='w-full h-full object-cover rounded-lg' />
+                ) : (
+                  <span className='text-sm mt-4'>Course image</span>
+                )}
               </div>
-              <div className='absolute top-2 right-2 cursor-pointer hover:bg-[rgba(255,255,255,0.1)] p-1 rounded transition-colors'>
-                <Trash2 className='w-4 h-4 text-[#9CA3AF]' />
-              </div>
-              {formData.image ? (
-                <img src={resolveMediaUrl(formData.image)} alt='Course' className='w-full h-full object-cover rounded-lg' />
-              ) : (
-                <span className='text-sm mt-4'>Course image</span>
-              )}
-            </div>
+            </ParallaxTilt>
           </div>
 
           {/* Setup Tabs */}
@@ -254,7 +258,8 @@ export default function EditCoursePage() {
               </TabsList>
               
               <TabsContent value="content" className="m-0 pt-0">
-                <div className='w-full overflow-x-auto bg-[rgba(0,0,0,0.15)] border-x border-b border-[rgba(255,255,255,0.05)] rounded-b-xl'>
+                <ParallaxTilt max={6} hoverScale={1.01}>
+                  <div className='w-full overflow-x-auto bg-[rgba(0,0,0,0.15)] border-x border-b border-[rgba(255,255,255,0.05)] rounded-b-xl'>
                   <table className='w-full text-left text-sm border-b border-[rgba(255,255,255,0.05)]'>
                     <thead>
                       <tr className='text-[#9CA3AF] font-medium border-b border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.02)]'>
@@ -296,7 +301,8 @@ export default function EditCoursePage() {
                         </Button>
                       </DialogTrigger>
                       <DialogContent className='sm:max-w-2xl bg-[#0F172A] border-[rgba(255,255,255,0.1)] p-0 gap-0 overflow-hidden text-[#E5E7EB] shadow-[0_0_50px_rgba(0,0,0,0.5)]'>
-                        <div className='p-6 space-y-6 pt-10'>
+                        <ParallaxTilt max={6} hoverScale={1.01} className='w-full'>
+                          <div className='p-6 space-y-6 pt-10'>
                           <div className='space-y-2'>
                             <label className='text-[#F59E0B] text-sm'>Content title</label>
                             <input 
@@ -415,11 +421,13 @@ export default function EditCoursePage() {
                               </div>
                             </TabsContent>
                           </Tabs>
-                        </div>
+                          </div>
+                        </ParallaxTilt>
                       </DialogContent>
                     </Dialog>
                   </div>
                 </div>
+                </ParallaxTilt>
               </TabsContent>
               
               <TabsContent value="description" className="p-6 border border-t-0 border-[rgba(255,255,255,0.05)] min-h-32 bg-[rgba(0,0,0,0.15)] rounded-b-xl">
@@ -429,7 +437,8 @@ export default function EditCoursePage() {
                 <p className="text-[#9CA3AF] text-sm">Course options placeholder...</p>
               </TabsContent>
               <TabsContent value="quiz" className="m-0 pt-0">
-                <div className='w-full overflow-x-auto bg-[rgba(0,0,0,0.15)] border-x border-b border-[rgba(255,255,255,0.05)] rounded-b-xl'>
+                <ParallaxTilt max={6} hoverScale={1.01}>
+                  <div className='w-full overflow-x-auto bg-[rgba(0,0,0,0.15)] border-x border-b border-[rgba(255,255,255,0.05)] rounded-b-xl'>
                   <table className='w-full text-left text-sm border-b border-[rgba(255,255,255,0.05)]'>
                     <thead>
                       <tr className='text-[#9CA3AF] font-medium border-b border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.02)]'>
@@ -503,7 +512,7 @@ export default function EditCoursePage() {
                                     }}
                                   />
                                 </div>
-                                <div className="grid grid-cols-[1fr_80px] mb-2 px-2">
+                                <div className="grid grid-cols-[1fr_80px] items-center px-2 mb-3">
                                   <div className="text-sm font-medium text-[#E5E7EB]">Choices</div>
                                   <div className="text-sm font-medium text-center text-[#E5E7EB]">Correct</div>
                                 </div>
@@ -583,12 +592,14 @@ export default function EditCoursePage() {
                     </Dialog>
                   </div>
                 </div>
+                </ParallaxTilt>
               </TabsContent>
 
             </Tabs>
           </div>
 
         </div>
+        </ParallaxTilt>
       </main>
     </div>
   );

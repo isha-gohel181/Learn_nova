@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createCourse } from '@/lib/api';
 import { ArrowLeft, Video, Save, Tags, DollarSign, Image as ImageIcon } from 'lucide-react';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 export default function CreateCoursePage() {
   const navigate = useNavigate();
@@ -128,7 +129,7 @@ export default function CreateCoursePage() {
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-4 sm:p-8 flex justify-center items-start pt-12 md:pt-20 lg:pt-24'>
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <section className='relative w-full max-w-3xl space-y-6'>
         <div className='mb-2'>
@@ -140,7 +141,8 @@ export default function CreateCoursePage() {
           </Link>
         </div>
 
-        <Card className='border border-[rgba(59,130,246,0.4)] bg-[rgba(255,255,255,0.06)] backdrop-blur-2xl shadow-[0_0_50px_rgba(59,130,246,0.15)] overflow-hidden relative'>
+        <ParallaxTilt max={8} hoverScale={1.01}>
+          <Card className='border border-[rgba(59,130,246,0.4)] bg-[rgba(255,255,255,0.06)] backdrop-blur-2xl shadow-[0_0_50px_rgba(59,130,246,0.15)] overflow-hidden relative'>
           <div className='absolute top-0 left-0 w-full h-1 bg-[linear-gradient(90deg,#3B82F6,#8B5CF6,#EC4899)]' />
           
           <CardHeader className='pb-4 border-b border-[rgba(255,255,255,0.05)] text-center sm:text-left sm:flex-row sm:items-center sm:justify-between'>
@@ -328,7 +330,8 @@ export default function CreateCoursePage() {
               {submitting ? 'Creating Course...' : 'Create Course & Continue'}
             </Button>
           </CardFooter>
-        </Card>
+          </Card>
+        </ParallaxTilt>
       </section>
     </main>
   );

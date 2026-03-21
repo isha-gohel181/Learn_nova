@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { API_BASE_URL, getCourseById, enrollInCourse } from '@/lib/api';
+import ParallaxTilt from '@/components/ParallaxTilt';
 
 // ─── star rating ──────────────────────────────────────────────────────────────
 function StarRating({ rating = 0, large = false }) {
@@ -117,7 +118,7 @@ export default function CourseDetailPage() {
   if (loading) {
     return (
       <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)] p-6'>
-        <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.18),transparent_40%)]' />
+        <div className='pointer-events-none absolute inset-0 ambient-blobs' />
         <div className='relative mx-auto max-w-5xl space-y-6 pt-8'>
           <div className='h-80 animate-pulse rounded-2xl bg-[rgba(255,255,255,0.06)]' />
           <div className='h-10 w-2/3 animate-pulse rounded-lg bg-[rgba(255,255,255,0.06)]' />
@@ -156,22 +157,23 @@ export default function CourseDetailPage() {
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)]'>
       {/* ambient glows */}
-      <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.18),transparent_40%),radial-gradient(circle_at_center,rgba(139,92,246,0.08),transparent_55%)]' />
+      <div className='pointer-events-none absolute inset-0 ambient-blobs' />
 
       <div className='relative mx-auto max-w-5xl px-4 pb-20 sm:px-6'>
 
         {/* ── navbar ── */}
         <nav className='flex items-center justify-between py-5'>
-          <div className='flex items-center gap-2'>
-            <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-[linear-gradient(135deg,#3B82F6,#8B5CF6)]'>
-              <svg className='h-4 w-4 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-              </svg>
+          <Link to='/courses' className='flex items-center gap-3 rounded-full border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.04)] px-4 py-2 text-[#E5E7EB] shadow-[0_0_14px_rgba(59,130,246,0.25)]'>
+            <img
+              src='/Logo.jpeg'
+              alt='LearnNova logo'
+              className='h-10 w-10 rounded-xl bg-white/70 p-1 object-contain shadow-[0_0_18px_rgba(34,211,238,0.55)] ring-[0.5px] ring-[rgba(59,130,246,0.3)] brightness-110 contrast-110'
+            />
+            <div>
+              <p className='font-heading text-[11px] uppercase tracking-[0.28em] text-[#93C5FD]'>LearnNova</p>
+              <p className='text-[10px] text-[#9CA3AF]'>Neon Frost OS</p>
             </div>
-            <Link to='/courses'>
-              <span className='text-lg font-bold text-[#E5E7EB] hover:text-[#22D3EE] transition-colors'>LearnNova</span>
-            </Link>
-          </div>
+          </Link>
 
           <div className='flex items-center gap-3'>
             <Link to='/courses'>
@@ -205,50 +207,52 @@ export default function CourseDetailPage() {
         </nav>
 
         {/* ── hero banner ── */}
-        <div className='relative overflow-hidden rounded-2xl border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl'>
-          {mediaUrl ? (
-            showVideo ? (
-              <video
-                src={mediaUrl}
-                className='h-72 w-full object-cover opacity-70'
-                muted
-                playsInline
-                loop
-                autoPlay
-              />
+        <ParallaxTilt max={10} hoverScale={1.01}>
+          <div className='relative overflow-hidden rounded-2xl border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl'>
+            {mediaUrl ? (
+              showVideo ? (
+                <video
+                  src={mediaUrl}
+                  className='h-72 w-full object-cover opacity-70'
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                />
+              ) : (
+                <img
+                  src={mediaUrl}
+                  alt={course.title}
+                  className='h-72 w-full object-cover opacity-60'
+                />
+              )
             ) : (
-              <img
-                src={mediaUrl}
-                alt={course.title}
-                className='h-72 w-full object-cover opacity-60'
-              />
-            )
-          ) : (
-            <div className='flex h-56 w-full items-center justify-center bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(139,92,246,0.1))]'>
-              <svg className='h-24 w-24 text-[rgba(139,92,246,0.3)]' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-              </svg>
-            </div>
-          )}
+              <div className='flex h-56 w-full items-center justify-center bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(139,92,246,0.1))]'>
+                <svg className='h-24 w-24 text-[rgba(139,92,246,0.3)]' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
+                </svg>
+              </div>
+            )}
 
-          {/* gradient overlay at bottom */}
-          <div className='absolute inset-0 bg-[linear-gradient(to_top,rgba(11,15,26,0.95)_0%,rgba(11,15,26,0.4)_60%,transparent_100%)]' />
+            {/* gradient overlay at bottom */}
+            <div className='absolute inset-0 bg-[linear-gradient(to_top,rgba(11,15,26,0.95)_0%,rgba(11,15,26,0.4)_60%,transparent_100%)]' />
 
-          {/* course headline over banner */}
-          <div className='absolute bottom-0 left-0 right-0 p-6 sm:p-8'>
-            <div className='flex flex-wrap items-center gap-2 mb-3'>
-              <Badge className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${accessColour}`}>
-                {course?.accessType === 'open' ? 'Free' : course?.accessType === 'paid' ? `Paid — $${course?.price}` : 'Invite Only'}
-              </Badge>
-              {course?.visibility === 'signed' && (
-                <Badge className='rounded-full border border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.1)] px-2.5 py-0.5 text-xs text-[#FBBF24]'>
-                  🔐 Signed-in users only
+            {/* course headline over banner */}
+            <div className='absolute bottom-0 left-0 right-0 p-6 sm:p-8'>
+              <div className='flex flex-wrap items-center gap-2 mb-3'>
+                <Badge className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${accessColour}`}>
+                  {course?.accessType === 'open' ? 'Free' : course?.accessType === 'paid' ? `Paid — $${course?.price}` : 'Invite Only'}
                 </Badge>
-              )}
+                {course?.visibility === 'signed' && (
+                  <Badge className='rounded-full border border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.1)] px-2.5 py-0.5 text-xs text-[#FBBF24]'>
+                    🔐 Signed-in users only
+                  </Badge>
+                )}
+              </div>
+              <h1 className='text-2xl font-bold text-[#F9FAFB] sm:text-3xl leading-tight'>{course?.title}</h1>
             </div>
-            <h1 className='text-2xl font-bold text-[#F9FAFB] sm:text-3xl leading-tight'>{course?.title}</h1>
           </div>
-        </div>
+        </ParallaxTilt>
 
         {/* ── main content grid ── */}
         <div className='mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3'>
@@ -298,91 +302,93 @@ export default function CourseDetailPage() {
 
           {/* ── right / enroll sidebar ── */}
           <div className='space-y-5'>
-            <Card className='sticky top-6 border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.2)] backdrop-blur-xl ring-0'>
-              <CardHeader className='space-y-2'>
-                <CardTitle className='text-xl text-[#E5E7EB]'>
-                  {course?.accessType === 'paid' ? (
-                    <span className='bg-[linear-gradient(90deg,#FBBF24,#F97316)] bg-clip-text text-transparent'>
-                      ${course?.price}
-                    </span>
-                  ) : (
-                    <span className='bg-[linear-gradient(90deg,#4ADE80,#22D3EE)] bg-clip-text text-transparent'>
-                      Free
-                    </span>
+            <ParallaxTilt max={8} hoverScale={1.01} className='sticky top-6'>
+              <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.2)] backdrop-blur-xl ring-0'>
+                <CardHeader className='space-y-2'>
+                  <CardTitle className='text-xl text-[#E5E7EB]'>
+                    {course?.accessType === 'paid' ? (
+                      <span className='bg-[linear-gradient(90deg,#FBBF24,#F97316)] bg-clip-text text-transparent'>
+                        ${course?.price}
+                      </span>
+                    ) : (
+                      <span className='bg-[linear-gradient(90deg,#4ADE80,#22D3EE)] bg-clip-text text-transparent'>
+                        Free
+                      </span>
+                    )}
+                  </CardTitle>
+                  <CardDescription className='text-[#9CA3AF]'>
+                    {course?.accessType === 'open'
+                      ? 'Open access — enroll instantly.'
+                      : course?.accessType === 'invite'
+                      ? 'Invite-only course. Contact the instructor.'
+                      : 'Purchase required to access.'}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className='space-y-4'>
+                  <StarRating rating={course?.averageRating || 0} large />
+
+                  {enrollMessage && (
+                    <div className='space-y-3'>
+                      <Alert className='border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.08)] text-[#4ADE80]'>
+                        <AlertTitle>Enrolled!</AlertTitle>
+                        <AlertDescription className='text-[#86EFAC]'>{enrollMessage}</AlertDescription>
+                      </Alert>
+                      <Link to={`/learn/${id}`}>
+                        <Button className='w-full bg-[linear-gradient(90deg,#059669_0%,#10B981_100%)] text-white shadow-[0_0_22px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-shadow'>
+                          🎬 Start Learning
+                        </Button>
+                      </Link>
+                      <Link to={`/quiz/${id}`}>
+                        <Button variant='outline' className='w-full border-[rgba(139,92,246,0.4)] bg-[rgba(139,92,246,0.08)] text-[#A78BFA] hover:bg-[rgba(139,92,246,0.15)]'>
+                          📝 Take Quiz
+                        </Button>
+                      </Link>
+                    </div>
                   )}
-                </CardTitle>
-                <CardDescription className='text-[#9CA3AF]'>
-                  {course?.accessType === 'open'
-                    ? 'Open access — enroll instantly.'
-                    : course?.accessType === 'invite'
-                    ? 'Invite-only course. Contact the instructor.'
-                    : 'Purchase required to access.'}
-                </CardDescription>
-              </CardHeader>
 
-              <CardContent className='space-y-4'>
-                <StarRating rating={course?.averageRating || 0} large />
-
-                {enrollMessage && (
-                  <div className='space-y-3'>
-                    <Alert className='border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.08)] text-[#4ADE80]'>
-                      <AlertTitle>Enrolled!</AlertTitle>
-                      <AlertDescription className='text-[#86EFAC]'>{enrollMessage}</AlertDescription>
+                  {enrollError && (
+                    <Alert variant='destructive'>
+                      <AlertTitle>Enrollment failed</AlertTitle>
+                      <AlertDescription>{enrollError}</AlertDescription>
                     </Alert>
-                    <Link to={`/learn/${id}`}>
-                      <Button className='w-full bg-[linear-gradient(90deg,#059669_0%,#10B981_100%)] text-white shadow-[0_0_22px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-shadow'>
-                        🎬 Start Learning
-                      </Button>
-                    </Link>
-                    <Link to={`/quiz/${id}`}>
-                      <Button variant='outline' className='w-full border-[rgba(139,92,246,0.4)] bg-[rgba(139,92,246,0.08)] text-[#A78BFA] hover:bg-[rgba(139,92,246,0.15)]'>
-                        📝 Take Quiz
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+                  )}
 
-                {enrollError && (
-                  <Alert variant='destructive'>
-                    <AlertTitle>Enrollment failed</AlertTitle>
-                    <AlertDescription>{enrollError}</AlertDescription>
-                  </Alert>
-                )}
+                  {course?.accessType !== 'invite' && !enrollMessage && !isInstructor && (
+                    <Button
+                      id='enroll-btn'
+                      className='w-full bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white shadow-[0_0_22px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] transition-shadow'
+                      onClick={handleEnroll}
+                      disabled={enrollLoading}
+                    >
+                      {enrollLoading ? 'Enrolling…' : isLoggedIn ? 'Enroll Now' : 'Sign In to Enroll'}
+                    </Button>
+                  )}
 
-                {course?.accessType !== 'invite' && !enrollMessage && !isInstructor && (
-                  <Button
-                    id='enroll-btn'
-                    className='w-full bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white shadow-[0_0_22px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] transition-shadow'
-                    onClick={handleEnroll}
-                    disabled={enrollLoading}
-                  >
-                    {enrollLoading ? 'Enrolling…' : isLoggedIn ? 'Enroll Now' : 'Sign In to Enroll'}
-                  </Button>
-                )}
+                  {!isLoggedIn && (
+                    <p className='text-center text-xs text-[#9CA3AF]'>
+                      <Link to='/login' className='text-[#22D3EE] hover:underline'>Sign in</Link>
+                      {' '}or{' '}
+                      <Link to='/register' className='text-[#22D3EE] hover:underline'>register</Link>
+                      {' '}to enroll and track your progress.
+                    </p>
+                  )}
 
-                {!isLoggedIn && (
-                  <p className='text-center text-xs text-[#9CA3AF]'>
-                    <Link to='/login' className='text-[#22D3EE] hover:underline'>Sign in</Link>
-                    {' '}or{' '}
-                    <Link to='/register' className='text-[#22D3EE] hover:underline'>register</Link>
-                    {' '}to enroll and track your progress.
-                  </p>
-                )}
-
-                {/* instructor info */}
-                {instructor && (
-                  <div className='mt-2 flex items-center gap-3 rounded-lg border border-[rgba(139,92,246,0.2)] bg-[rgba(139,92,246,0.06)] p-3'>
-                    <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3B82F6,#8B5CF6)] text-sm font-bold text-white'>
-                      {(instructor.name || 'I')[0].toUpperCase()}
+                  {/* instructor info */}
+                  {instructor && (
+                    <div className='mt-2 flex items-center gap-3 rounded-lg border border-[rgba(139,92,246,0.2)] bg-[rgba(139,92,246,0.06)] p-3'>
+                      <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3B82F6,#8B5CF6)] text-sm font-bold text-white'>
+                        {(instructor.name || 'I')[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className='text-sm font-medium text-[#E5E7EB]'>{instructor.name}</p>
+                        <p className='text-xs text-[#9CA3AF]'>{instructor.email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className='text-sm font-medium text-[#E5E7EB]'>{instructor.name}</p>
-                      <p className='text-xs text-[#9CA3AF]'>{instructor.email}</p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  )}
+                </CardContent>
+              </Card>
+            </ParallaxTilt>
           </div>
         </div>
       </div>
