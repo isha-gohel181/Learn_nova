@@ -7,8 +7,8 @@ const router = express.Router();
 
 // Protected routes - Learner only
 router.post('/update', authMiddleware, roleMiddleware('learner'), progressController.updateProgress);
-router.get('/:courseId', authMiddleware, roleMiddleware('learner'), progressController.getProgressByCourse);
-router.get('/', authMiddleware, roleMiddleware('learner'), progressController.getAllProgress);
 router.get('/stats', authMiddleware, roleMiddleware('learner'), progressController.getProgressStats);
+router.get('/', authMiddleware, roleMiddleware('learner'), progressController.getAllProgress);
+router.get('/:courseId', authMiddleware, roleMiddleware('learner'), progressController.getProgressByCourse);
 
 module.exports = router;

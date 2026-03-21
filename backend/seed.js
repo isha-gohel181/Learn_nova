@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const User = require('./models/user.model');
-const Course = require('./models/course.model');
-const Lesson = require('./models/lesson.model');
-const Quiz = require('./models/quiz.model');
+const User = require('./src/models/user.model');
+const Course = require('./src/models/course.model');
+const Lesson = require('./src/models/lesson.model');
+const Quiz = require('./src/models/quiz.model');
 
 dotenv.config();
 

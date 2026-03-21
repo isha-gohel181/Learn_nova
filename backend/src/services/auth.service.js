@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const { generateToken } = require('../utils/jwt.util');
 const { validateEmail, validatePassword } = require('../utils/validation.util');
+const AppError = require('../utils/error.util');
 
 class AuthService {
   async register(data) {
@@ -8,25 +9,25 @@ class AuthService {
 
     // Validation
     if (!name || !email || !password || !confirmPassword) {
-      throw new Error('All fields are required');
+      throw new AppError('All fields are required', 400);
     }
 
     if (!validateEmail(email)) {
-      throw new Error('Invalid email format');
+      throw new AppError('Invalid email format', 400);
     }
 
     if (!validatePassword(password)) {
-      throw new Error('Password must be at least 6 characters');
+      throw new AppError('Password must be at least 6 characters', 400);
     }
 
     if (password !== confirmPassword) {
-      throw new Error('Passwords do not match');
+      throw new AppError('Passwords do not match', 400);
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new AppError('Email already registered', 400);
     }
 
     // Create new user
@@ -55,24 +56,24 @@ class AuthService {
   async login(email, password) {
     // Validation
     if (!email || !password) {
-      throw new Error('Email and password are required');
+      throw new AppError('Email and password are required', 400);
     }
 
     if (!validateEmail(email)) {
-      throw new Error('Invalid email format');
+      throw new AppError('Invalid email format', 400);
     }
 
     // Find user and include password field
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
     if (!user) {
-      throw new Error('Invalid email or password');
+      throw new AppError('Invalid email or password', 401);
     }
 
     // Check password
     const isPasswordCorrect = await user.comparePassword(password);
     if (!isPasswordCorrect) {
-      throw new Error('Invalid email or password');
+      throw new AppError('Invalid email or password', 401);
     }
 
     const token = generateToken(user._id);
@@ -94,7 +95,7 @@ class AuthService {
     const user = await User.findById(userId);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new AppError('User not found', 404);
     }
 
     return {
