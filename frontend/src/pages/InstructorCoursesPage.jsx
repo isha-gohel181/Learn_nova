@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { getInstructorCourses, deleteCourse, publishCourse } from '@/lib/api';
-import { ArrowLeft, BookOpen, Plus, Edit, Trash2, Eye, EyeOff, MoreVertical } from 'lucide-react';
+import { ArrowLeft, BookOpen, Plus, Edit, Trash2, Eye, EyeOff, MoreVertical, PlayCircle, FileQuestion, BarChart } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function InstructorCoursesPage() {
@@ -165,19 +165,33 @@ export default function InstructorCoursesPage() {
                           </h3>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant='ghost' size='sm' className='h-8 w-8 p-0 text-[#9CA3AF] hover:text-white shrink-0 -mr-2 -mt-1'>
+                              <Button variant='ghost' size='sm' className='h-8 w-8 p-0 text-[#9CA3AF] hover:bg-[rgba(59,130,246,0.2)] hover:text-blue-300 data-[state=open]:bg-[rgba(59,130,246,0.2)] data-[state=open]:text-blue-300 shrink-0 -mr-2 -mt-1'>
                                 <MoreVertical className='w-4 h-4' />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align='end' className='bg-[#1A1F3A] border-[rgba(59,130,246,0.3)] text-gray-200'>
                               <Link to={`/instructor/course/${course._id}/edit`}>
-                                <DropdownMenuItem className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300'>
+                                <DropdownMenuItem className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300 [&_svg]:!text-[#9CA3AF] focus:[&_svg]:!text-blue-300'>
                                   <Edit className='w-4 h-4 mr-2' /> Edit Info
                                 </DropdownMenuItem>
                               </Link>
-                              {/* Future: Manage Lessons */}
+                              <Link to={`/instructor/course/${course._id}/lessons`}>
+                                <DropdownMenuItem className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300 [&_svg]:!text-[#9CA3AF] focus:[&_svg]:!text-blue-300'>
+                                  <PlayCircle className='w-4 h-4 mr-2' /> Manage Lessons
+                                </DropdownMenuItem>
+                              </Link>
+                              <Link to={`/instructor/course/${course._id}/quiz`}>
+                                <DropdownMenuItem className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300 [&_svg]:!text-[#9CA3AF] focus:[&_svg]:!text-blue-300'>
+                                  <FileQuestion className='w-4 h-4 mr-2' /> Manage Quiz
+                                </DropdownMenuItem>
+                              </Link>
+                              <Link to={`/instructor/course/${course._id}/analytics`}>
+                                <DropdownMenuItem className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300 [&_svg]:!text-[#9CA3AF] focus:[&_svg]:!text-blue-300'>
+                                  <BarChart className='w-4 h-4 mr-2' /> View Analytics
+                                </DropdownMenuItem>
+                              </Link>
                               <DropdownMenuItem 
-                                className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300'
+                                className='hover:bg-[rgba(255,255,255,0.1)] cursor-pointer focus:bg-[rgba(59,130,246,0.2)] focus:text-blue-300 [&_svg]:!text-[#9CA3AF] focus:[&_svg]:!text-blue-300'
                                 onClick={() => handleTogglePublish(course._id, course.isPublished)}
                               >
                                 {course.isPublished ? (
@@ -187,7 +201,7 @@ export default function InstructorCoursesPage() {
                                 )}
                               </DropdownMenuItem>
                               <DropdownMenuItem 
-                                className='hover:bg-red-500/10 text-red-400 cursor-pointer focus:bg-red-500/20 focus:text-red-300'
+                                className='hover:bg-red-500/10 text-red-400 cursor-pointer focus:bg-red-500/20 focus:text-red-300 [&_svg]:!text-red-400 focus:[&_svg]:!text-red-300'
                                 onClick={() => handleDelete(course._id)}
                               >
                                 <Trash2 className='w-4 h-4 mr-2' /> Delete

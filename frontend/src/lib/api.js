@@ -67,6 +67,10 @@ export async function getInstructorDashboardReport() {
   return apiRequest('/api/reports/dashboard', { withAuth: true });
 }
 
+export async function getCourseAnalytics(courseId) {
+  return apiRequest(`/api/reports/course/${courseId}`, { withAuth: true });
+}
+
 // ─── Lessons ──────────────────────────────────────────────────────────────────
 
 export async function getLessonsByCourse(courseId) {
@@ -80,6 +84,22 @@ export async function getLessonById(id) {
 export async function markLessonComplete(payload) {
   // payload: { lessonId, courseId }
   return apiRequest('/api/lessons/complete', { method: 'POST', payload, withAuth: true });
+}
+
+export async function createLesson(payload) {
+  return apiRequest('/api/lessons', { method: 'POST', payload, withAuth: true });
+}
+
+export async function updateLesson(id, payload) {
+  return apiRequest(`/api/lessons/${id}`, { method: 'PUT', payload, withAuth: true });
+}
+
+export async function deleteLesson(id) {
+  return apiRequest(`/api/lessons/${id}`, { method: 'DELETE', withAuth: true });
+}
+
+export async function publishLesson(id, isPublished) {
+  return apiRequest(`/api/lessons/${id}/publish`, { method: 'PATCH', payload: { isPublished }, withAuth: true });
 }
 
 // ─── Quiz ─────────────────────────────────────────────────────────────────────
@@ -96,6 +116,18 @@ export async function submitQuiz(payload) {
 
 export async function getQuizResults(courseId) {
   return apiRequest(`/api/quiz/results/${courseId}`, { withAuth: true });
+}
+
+export async function createQuiz(payload) {
+  return apiRequest('/api/quiz', { method: 'POST', payload, withAuth: true });
+}
+
+export async function updateQuiz(courseId, payload) {
+  return apiRequest(`/api/quiz/${courseId}`, { method: 'PUT', payload, withAuth: true });
+}
+
+export async function publishQuiz(courseId, isPublished) {
+  return apiRequest(`/api/quiz/${courseId}/publish`, { method: 'PATCH', payload: { isPublished }, withAuth: true });
 }
 
 // ─── Progress ─────────────────────────────────────────────────────────────────

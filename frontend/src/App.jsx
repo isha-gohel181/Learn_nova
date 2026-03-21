@@ -13,6 +13,9 @@ import SubmitReviewPage from '@/pages/SubmitReviewPage';
 import InstructorCoursesPage from '@/pages/InstructorCoursesPage';
 import CreateCoursePage from '@/pages/CreateCoursePage';
 import EditCoursePage from '@/pages/EditCoursePage';
+import LessonManagementPage from '@/pages/LessonManagementPage';
+import QuizManagementPage from '@/pages/QuizManagementPage';
+import CourseAnalyticsPage from '@/pages/CourseAnalyticsPage';
 
 function App() {
   return (
@@ -39,6 +42,9 @@ function App() {
         <Route path='/instructor/my-courses' element={<InstructorCoursesPage />} />
         <Route path='/instructor/course/create' element={<CreateCoursePage />} />
         <Route path='/instructor/course/:id/edit' element={<EditCoursePage />} />
+        <Route path='/instructor/course/:courseId/lessons' element={<LessonManagementPage />} />
+        <Route path='/instructor/course/:courseId/quiz' element={<QuizManagementPage />} />
+        <Route path='/instructor/course/:courseId/analytics' element={<CourseAnalyticsPage />} />
 
         {/* Lesson Viewer — /learn/:courseId */}
         <Route path='/learn/:courseId' element={<LessonViewerPage />} />
