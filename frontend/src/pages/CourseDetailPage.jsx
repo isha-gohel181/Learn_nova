@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { getCourseById, enrollInCourse } from '@/lib/api';
+import { API_BASE_URL, getCourseById, enrollInCourse } from '@/lib/api';
 
 // ─── star rating ──────────────────────────────────────────────────────────────
 function StarRating({ rating = 0, large = false }) {
@@ -40,6 +40,19 @@ function StatPill({ icon, label, value }) {
   );
 }
 
+function isVideoUrl(url) {
+  if (!url) return false;
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
+function resolveMediaUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('/uploads/')) {
+    return `${API_BASE_URL}${url}`;
+  }
+  return url;
+}
+
 const ACCESS_COLOURS = {
   open: 'bg-[rgba(34,197,94,0.18)] text-[#4ADE80] border-[rgba(34,197,94,0.3)]',
   paid: 'bg-[rgba(251,191,36,0.18)] text-[#FBBF24] border-[rgba(251,191,36,0.3)]',
@@ -58,6 +71,7 @@ export default function CourseDetailPage() {
 
   const isLoggedIn = Boolean(localStorage.getItem('authToken'));
   const user = isLoggedIn ? JSON.parse(localStorage.getItem('authUser') || '{}') : null;
+  const isInstructor = user?.role === 'instructor';
 
   useEffect(() => {
     async function load() {
@@ -136,6 +150,8 @@ export default function CourseDetailPage() {
 
   const instructor = course?.instructorId;
   const accessColour = ACCESS_COLOURS[course?.accessType] || ACCESS_COLOURS.open;
+  const mediaUrl = resolveMediaUrl(course?.mediaUrl || course?.image);
+  const showVideo = course?.mediaType === 'video' || isVideoUrl(mediaUrl);
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[linear-gradient(145deg,#0B0F1A_0%,#1A1F3A_100%)]'>
@@ -190,12 +206,23 @@ export default function CourseDetailPage() {
 
         {/* ── hero banner ── */}
         <div className='relative overflow-hidden rounded-2xl border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl'>
-          {course?.image ? (
-            <img
-              src={course.image}
-              alt={course.title}
-              className='h-72 w-full object-cover opacity-60'
-            />
+          {mediaUrl ? (
+            showVideo ? (
+              <video
+                src={mediaUrl}
+                className='h-72 w-full object-cover opacity-70'
+                muted
+                playsInline
+                loop
+                autoPlay
+              />
+            ) : (
+              <img
+                src={mediaUrl}
+                alt={course.title}
+                className='h-72 w-full object-cover opacity-60'
+              />
+            )
           ) : (
             <div className='flex h-56 w-full items-center justify-center bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(139,92,246,0.1))]'>
               <svg className='h-24 w-24 text-[rgba(139,92,246,0.3)]' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -322,7 +349,7 @@ export default function CourseDetailPage() {
                   </Alert>
                 )}
 
-                {course?.accessType !== 'invite' && !enrollMessage && (
+                {course?.accessType !== 'invite' && !enrollMessage && !isInstructor && (
                   <Button
                     id='enroll-btn'
                     className='w-full bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)] text-white shadow-[0_0_22px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] transition-shadow'

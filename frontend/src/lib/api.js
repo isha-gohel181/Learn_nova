@@ -1,4 +1,4 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
 
 function getAuthHeaders() {
   const token = localStorage.getItem('authToken');
@@ -13,6 +13,24 @@ async function apiRequest(path, { method = 'GET', payload, withAuth = false } = 
       ...(withAuth ? getAuthHeaders() : {}),
     },
     body: payload ? JSON.stringify(payload) : undefined,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || 'Something went wrong');
+  }
+
+  return data;
+}
+
+async function apiFormRequest(path, { method = 'POST', formData, withAuth = false } = {}) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method,
+    headers: {
+      ...(withAuth ? getAuthHeaders() : {}),
+    },
+    body: formData,
   });
 
   const data = await response.json();
@@ -144,6 +162,11 @@ export async function getProgressByCourse(courseId) {
   return apiRequest(`/api/progress/${courseId}`, { withAuth: true });
 }
 
+export async function updateProgress(payload) {
+  // payload: { courseId, lessonId }
+  return apiRequest('/api/progress/update', { method: 'POST', payload, withAuth: true });
+}
+
 // ─── Reviews ──────────────────────────────────────────────────────────────────
 
 export async function submitReview(payload) {
@@ -161,10 +184,16 @@ export async function getMyReviews(page = 1, limit = 10) {
 // ─── Instructor Courses ───────────────────────────────────────────────────────
 
 export async function createCourse(payload) {
+  if (payload instanceof FormData) {
+    return apiFormRequest('/api/courses', { method: 'POST', formData: payload, withAuth: true });
+  }
   return apiRequest('/api/courses', { method: 'POST', payload, withAuth: true });
 }
 
 export async function updateCourse(id, payload) {
+  if (payload instanceof FormData) {
+    return apiFormRequest(`/api/courses/${id}`, { method: 'PUT', formData: payload, withAuth: true });
+  }
   return apiRequest(`/api/courses/${id}`, { method: 'PUT', payload, withAuth: true });
 }
 

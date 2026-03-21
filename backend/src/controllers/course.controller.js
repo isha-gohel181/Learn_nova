@@ -3,6 +3,40 @@ const Lesson = require('../models/lesson.model');
 const Progress = require('../models/progress.model');
 const Review = require('../models/review.model');
 
+function parseTags(tags) {
+  if (!tags) return [];
+  if (Array.isArray(tags)) return tags;
+  return String(tags)
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+function resolveBannerFields(file, imageUrl) {
+  if (file) {
+    return {
+      mediaUrl: `/uploads/${file.filename}`,
+      mediaType: 'image',
+      image: `/uploads/${file.filename}`,
+    };
+  }
+
+  if (imageUrl) {
+    return {
+      mediaUrl: imageUrl,
+      mediaType: 'image',
+      image: imageUrl,
+    };
+  }
+
+  return null;
+}
+
+function resolveIntroVideo(file) {
+  if (!file) return null;
+  return `/uploads/${file.filename}`;
+}
+
 class CourseController {
   // Create a new course
   async createCourse(req, res, next) {
@@ -16,16 +50,23 @@ class CourseController {
         });
       }
 
+      const bannerFile = req.files?.banner?.[0];
+      const introVideoFile = req.files?.introVideo?.[0];
+      const bannerFields = resolveBannerFields(bannerFile, image);
+      const introVideoUrl = resolveIntroVideo(introVideoFile);
+
       const course = await Course.create({
         title,
         description,
-        tags: tags || [],
+        tags: parseTags(tags),
         visibility: visibility || 'everyone',
         accessType: accessType || 'open',
-        price: price || 0,
+        price: price ? Number(price) : 0,
         image: image || null,
         instructorId: req.user._id,
         isPublished: false,
+        ...(bannerFields || {}),
+        ...(introVideoUrl ? { introVideoUrl } : {}),
       });
 
       res.status(201).json({
@@ -141,11 +182,29 @@ class CourseController {
 
       if (title) course.title = title;
       if (description) course.description = description;
-      if (tags) course.tags = tags;
+      if (tags !== undefined) course.tags = parseTags(tags);
       if (visibility) course.visibility = visibility;
       if (accessType) course.accessType = accessType;
-      if (price !== undefined) course.price = price;
-      if (image) course.image = image;
+      if (price !== undefined) course.price = Number(price);
+
+      const bannerFile = req.files?.banner?.[0];
+      const introVideoFile = req.files?.introVideo?.[0];
+
+      const bannerFields = resolveBannerFields(bannerFile, image);
+      if (bannerFields) {
+        course.mediaUrl = bannerFields.mediaUrl;
+        course.mediaType = bannerFields.mediaType;
+        course.image = bannerFields.image;
+      } else if (image) {
+        course.image = image;
+        course.mediaUrl = image;
+        course.mediaType = 'image';
+      }
+
+      const introVideoUrl = resolveIntroVideo(introVideoFile);
+      if (introVideoUrl) {
+        course.introVideoUrl = introVideoUrl;
+      }
 
       await course.save();
 
