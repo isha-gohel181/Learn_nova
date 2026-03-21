@@ -4,9 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { getInstructorCourses, deleteCourse, publishCourse } from '@/lib/api';
+import { API_BASE_URL, getInstructorCourses, deleteCourse, publishCourse } from '@/lib/api';
 import { ArrowLeft, BookOpen, Plus, Edit, Trash2, Eye, EyeOff, MoreVertical } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
+function isVideoUrl(url) {
+  if (!url) return false;
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
+function resolveMediaUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('/uploads/')) {
+    return `${API_BASE_URL}${url}`;
+  }
+  return url;
+}
 
 export default function InstructorCoursesPage() {
   const navigate = useNavigate();
@@ -133,14 +146,29 @@ export default function InstructorCoursesPage() {
               </div>
             ) : (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>
-                {courses.map((course) => (
-                  <div
-                    key={course._id}
-                    className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] overflow-hidden flex flex-col group transition-all duration-300 hover:border-[rgba(139,92,246,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]'
-                  >
+                {courses.map((course) => {
+                  const mediaUrl = resolveMediaUrl(course.mediaUrl || course.image);
+                  const showVideo = course.mediaType === 'video' || isVideoUrl(mediaUrl);
+
+                  return (
+                    <div
+                      key={course._id}
+                      className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.03)] overflow-hidden flex flex-col group transition-all duration-300 hover:border-[rgba(139,92,246,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]'
+                    >
                     <div className='h-32 bg-[rgba(255,255,255,0.02)] relative border-b border-[rgba(255,255,255,0.05)]'>
-                      {course.image ? (
-                        <img src={course.image} alt={course.title} className='w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity' />
+                      {mediaUrl ? (
+                        showVideo ? (
+                          <video
+                            src={mediaUrl}
+                            className='w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity'
+                            muted
+                            playsInline
+                            loop
+                            autoPlay
+                          />
+                        ) : (
+                          <img src={mediaUrl} alt={course.title} className='w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity' />
+                        )
                       ) : (
                         <div className='w-full h-full flex items-center justify-center bg-[linear-gradient(45deg,rgba(59,130,246,0.1),rgba(139,92,246,0.1))] text-[#4B5563]'>
                           <BookOpen className='w-10 h-10 opacity-30' />
@@ -215,8 +243,9 @@ export default function InstructorCoursesPage() {
                         </Link>
                       </div>
                     </div>
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </CardContent>

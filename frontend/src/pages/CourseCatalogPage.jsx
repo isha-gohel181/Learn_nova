@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { getPublicCoursesFiltered } from '@/lib/api';
+import { API_BASE_URL, getPublicCoursesFiltered } from '@/lib/api';
 
 // ─── helper: star rating display ─────────────────────────────────────────────
 function StarRating({ rating = 0 }) {
@@ -28,6 +28,19 @@ function StarRating({ rating = 0 }) {
   );
 }
 
+function isVideoUrl(url) {
+  if (!url) return false;
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
+function resolveMediaUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('/uploads/')) {
+    return `${API_BASE_URL}${url}`;
+  }
+  return url;
+}
+
 // ─── access type badge colours ────────────────────────────────────────────────
 const ACCESS_COLOURS = {
   open: 'bg-[rgba(34,197,94,0.18)] text-[#4ADE80] border-[rgba(34,197,94,0.3)]',
@@ -39,18 +52,31 @@ const ACCESS_COLOURS = {
 function CourseCard({ course }) {
   const instructor = course.instructorId;
   const accessColour = ACCESS_COLOURS[course.accessType] || ACCESS_COLOURS.open;
+  const mediaUrl = resolveMediaUrl(course.mediaUrl || course.image);
+  const showVideo = course.mediaType === 'video' || isVideoUrl(mediaUrl);
 
   return (
     <Link to={`/courses/${course._id}`} className='group block h-full focus:outline-none'>
       <Card className='h-full overflow-hidden border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] backdrop-blur-xl ring-0 transition-all duration-300 hover:border-[rgba(59,130,246,0.5)] hover:bg-[rgba(255,255,255,0.07)] hover:shadow-[0_0_28px_rgba(59,130,246,0.25)] group-focus:ring-2 group-focus:ring-[rgba(139,92,246,0.6)]'>
         {/* thumbnail */}
         <div className='relative h-40 w-full overflow-hidden bg-[rgba(15,23,42,0.6)]'>
-          {course.image ? (
-            <img
-              src={course.image}
-              alt={course.title}
-              className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
-            />
+          {mediaUrl ? (
+            showVideo ? (
+              <video
+                src={mediaUrl}
+                className='h-full w-full object-cover'
+                muted
+                playsInline
+                loop
+                autoPlay
+              />
+            ) : (
+              <img
+                src={mediaUrl}
+                alt={course.title}
+                className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
+              />
+            )
           ) : (
             <div className='flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.15))]'>
               <svg className='h-12 w-12 text-[rgba(139,92,246,0.4)]' fill='none' stroke='currentColor' viewBox='0 0 24 24'>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createCourse } from '@/lib/api';
-import { ArrowLeft, Video, Save, Tags, Globe, DollarSign, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Video, Save, Tags, DollarSign, Image as ImageIcon } from 'lucide-react';
 
 export default function CreateCoursePage() {
   const navigate = useNavigate();
@@ -21,6 +21,22 @@ export default function CreateCoursePage() {
     price: 0,
     image: ''
   });
+
+  const [bannerFile, setBannerFile] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState('');
+  const [introVideoFile, setIntroVideoFile] = useState(null);
+  const [introVideoPreview, setIntroVideoPreview] = useState('');
+
+  useEffect(() => {
+    return () => {
+      if (bannerPreview) {
+        URL.revokeObjectURL(bannerPreview);
+      }
+      if (introVideoPreview) {
+        URL.revokeObjectURL(introVideoPreview);
+      }
+    };
+  }, [bannerPreview, introVideoPreview]);
   
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -29,6 +45,31 @@ export default function CreateCoursePage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleBannerFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setBannerFile(null);
+      setBannerPreview('');
+      return;
+    }
+
+    setBannerFile(file);
+    setBannerPreview(URL.createObjectURL(file));
+  };
+
+  const handleIntroVideoFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setIntroVideoFile(null);
+      setIntroVideoPreview('');
+      return;
+    }
+
+    setIntroVideoFile(file);
+    setIntroVideoPreview(URL.createObjectURL(file));
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,11 +83,28 @@ export default function CreateCoursePage() {
     setSubmitting(true);
 
     try {
-      const payload = {
-        ...formData,
-        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        price: Number(formData.price)
-      };
+      const tags = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean);
+
+      let payload;
+
+      if (bannerFile || introVideoFile) {
+        const formPayload = new FormData();
+        formPayload.append('title', formData.title);
+        formPayload.append('description', formData.description);
+        formPayload.append('tags', tags.join(','));
+        formPayload.append('visibility', formData.visibility);
+        formPayload.append('accessType', formData.accessType);
+        formPayload.append('price', String(formData.price || 0));
+        if (bannerFile) formPayload.append('banner', bannerFile);
+        if (introVideoFile) formPayload.append('introVideo', introVideoFile);
+        payload = formPayload;
+      } else {
+        payload = {
+          ...formData,
+          tags,
+          price: Number(formData.price),
+        };
+      }
 
       const res = await createCourse(payload);
       
@@ -84,8 +142,19 @@ export default function CreateCoursePage() {
                 Setup the fundamental details of your new learning module.
               </CardDescription>
             </div>
-            <div className='hidden sm:flex bg-[rgba(59,130,246,0.15)] ring-1 ring-[#3B82F6]/40 p-3 rounded-xl mt-4 sm:mt-0'>
-              <Video className='w-8 h-8 text-[#60A5FA]' />
+            <div className='hidden sm:flex flex-col gap-2 bg-[rgba(59,130,246,0.12)] ring-1 ring-[#3B82F6]/40 p-3 rounded-xl mt-4 sm:mt-0 w-56'>
+              <div className='flex items-center gap-2 text-sm text-[#BFDBFE]'>
+                <Video className='w-5 h-5 text-[#60A5FA]' />
+                Course Intro Video
+              </div>
+              <Input
+                id='introVideo'
+                name='introVideo'
+                type='file'
+                accept='video/*'
+                onChange={handleIntroVideoFile}
+                className='bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.12)] text-[#E5E7EB] file:text-[#E5E7EB] file:bg-[rgba(59,130,246,0.2)] file:border-0 file:rounded-md file:px-2 file:py-1 file:mr-2 text-xs'
+              />
             </div>
           </CardHeader>
 
@@ -100,6 +169,24 @@ export default function CreateCoursePage() {
             <form id='create-course-form' onSubmit={handleSubmit} className='space-y-6'>
               
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='space-y-3 sm:hidden md:col-span-2'>
+                  <Label className='text-[#E5E7EB] font-semibold flex items-center gap-2'>
+                    <Video className='w-4 h-4 text-[#9CA3AF]' /> Course Intro Video
+                  </Label>
+                  <Input
+                    id='introVideoMobile'
+                    name='introVideo'
+                    type='file'
+                    accept='video/*'
+                    onChange={handleIntroVideoFile}
+                    className='bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] text-[#E5E7EB] file:text-[#E5E7EB] file:bg-[rgba(59,130,246,0.2)] file:border-0 file:rounded-md file:px-3 file:py-2 file:mr-3'
+                  />
+                  {introVideoPreview && (
+                    <div className='rounded-xl border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.03)] p-3'>
+                      <video src={introVideoPreview} controls className='w-full rounded-lg max-h-56 bg-black' />
+                    </div>
+                  )}
+                </div>
                 <div className='space-y-2 md:col-span-2'>
                   <Label htmlFor='title' className='text-[#E5E7EB] font-semibold text-sm'>
                     Course Title <span className='text-red-400'>*</span>
@@ -144,19 +231,42 @@ export default function CreateCoursePage() {
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='image' className='text-[#E5E7EB] font-semibold flex items-center gap-2'>
-                    <ImageIcon className='w-4 h-4 text-[#9CA3AF]' /> Banner Image URL
+                <div className='space-y-3'>
+                  <Label className='text-[#E5E7EB] font-semibold flex items-center gap-2'>
+                    <ImageIcon className='w-4 h-4 text-[#9CA3AF]' /> Banner Image
                   </Label>
+                  <Input
+                    id='banner'
+                    name='banner'
+                    type='file'
+                    accept='image/*'
+                    onChange={handleBannerFile}
+                    className='bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] text-[#E5E7EB] file:text-[#E5E7EB] file:bg-[rgba(59,130,246,0.2)] file:border-0 file:rounded-md file:px-3 file:py-2 file:mr-3'
+                  />
                   <Input
                     id='image'
                     name='image'
                     value={formData.image}
                     onChange={handleChange}
-                    placeholder='https://example.com/banner.jpg'
-                    className='bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] text-[#E5E7EB] focus:border-[#3B82F6]'
+                    placeholder='...or paste a media URL'
+                    disabled={Boolean(bannerFile)}
+                    className={`bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] text-[#E5E7EB] focus:border-[#3B82F6] ${bannerFile ? 'opacity-60 cursor-not-allowed' : ''}`}
                   />
+                  {bannerPreview && (
+                    <div className='rounded-xl border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.03)] p-3'>
+                      <img src={bannerPreview} alt='Course preview' className='w-full rounded-lg max-h-56 object-cover' />
+                    </div>
+                  )}
                 </div>
+
+                <div className='space-y-3 hidden sm:block md:col-span-2'>
+                  {introVideoPreview && (
+                    <div className='rounded-xl border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.03)] p-3'>
+                      <video src={introVideoPreview} controls className='w-full rounded-lg max-h-56 bg-black' />
+                    </div>
+                  )}
+                </div>
+
 
                 <div className='grid grid-cols-2 gap-4 col-span-1 md:col-span-2'>
                   <div className='space-y-2'>
