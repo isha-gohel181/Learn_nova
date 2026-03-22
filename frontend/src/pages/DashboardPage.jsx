@@ -16,6 +16,67 @@ import {
   getPublicCourses,
 } from '@/lib/api';
 
+const BADGE_TRACK = [
+  { label: 'Newbie', points: 0 },
+  { label: 'Explorer', points: 40 },
+  { label: 'Achiever', points: 60 },
+  { label: 'Specialist', points: 80 },
+  { label: 'Expert', points: 100 },
+  { label: 'Master', points: 120 },
+];
+
+function clamp(value, min = 0, max = 100) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function ProgressRing({ value, label, sublabel, size = 120, gradientId = 'ring-gradient' }) {
+  const stroke = 10;
+  const radius = size / 2 - stroke;
+  const circumference = 2 * Math.PI * radius;
+  const pct = clamp(value);
+  const offset = circumference - (pct / 100) * circumference;
+
+  return (
+    <div className='flex flex-col items-center gap-2'>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <defs>
+          <linearGradient id={gradientId} x1='0%' y1='0%' x2='100%' y2='100%'>
+            <stop offset='0%' stopColor='#3B82F6' />
+            <stop offset='100%' stopColor='#8B5CF6' />
+          </linearGradient>
+        </defs>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill='none'
+          stroke='rgba(255,255,255,0.08)'
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill='none'
+          stroke={`url(#${gradientId})`}
+          strokeWidth={stroke}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap='round'
+          style={{ transform: 'rotate(-90deg)', transformOrigin: 'center', transition: 'stroke-dashoffset 0.6s ease' }}
+        />
+        <text x='50%' y='50%' textAnchor='middle' dominantBaseline='middle' fill='#E5E7EB' fontSize='18' fontWeight='700'>
+          {Math.round(pct)}%
+        </text>
+      </svg>
+      <div className='text-center'>
+        <p className='text-sm font-semibold text-[#E5E7EB]'>{label}</p>
+        {sublabel && <p className='text-xs text-[#9CA3AF]'>{sublabel}</p>}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
@@ -149,6 +210,9 @@ export default function DashboardPage() {
     navigate('/login', { replace: true });
   }
 
+  const isLearner = profile?.role === 'learner';
+  const isInstructor = profile?.role === 'instructor';
+
   const navItems = [
     { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
     { label: 'My Courses', to: '/courses', icon: BookOpen },
@@ -264,52 +328,218 @@ export default function DashboardPage() {
           </Alert>
         ) : null}
 
-        {profile?.role === 'learner' && learnerContinue ? (
-          <motion.div variants={itemVariants}>
-            <ParallaxTilt max={10} hoverScale={1.02}>
-              <Card className='border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.08)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
-              <CardHeader className='flex flex-row items-center justify-between'>
-                <div>
-                  <CardTitle className='text-xl'>Continue Learning</CardTitle>
-                  <CardDescription className='text-[#9CA3AF]'>Pick up where you left off</CardDescription>
-                </div>
-                <Badge className='bg-[rgba(34,211,238,0.2)] text-[#22D3EE] border-[rgba(34,211,238,0.3)]'>
-                  {learnerContinue.progressPercent || 0}% complete
-                </Badge>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <p className='text-lg font-semibold text-[#E5E7EB]'>
-                  {learnerContinue.courseId?.title || 'Your course'}
-                </p>
-                <Progress
-                  value={learnerContinue.progressPercent || 0}
-                  className='h-2 bg-[rgba(255,255,255,0.12)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)]'
-                />
-                <Link to={`/learn/${learnerContinue.courseId?._id}`}>
-                  <Button className='bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] text-white shadow-[0_0_22px_rgba(59,130,246,0.4)]'>
-                    Resume Lesson
-                  </Button>
-                </Link>
-              </CardContent>
-              </Card>
-            </ParallaxTilt>
-          </motion.div>
-        ) : null}
+        {isLearner && dashboardData ? (
+          <div className='space-y-6'>
+            <div className='grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]'>
+              <ParallaxTilt max={10} hoverScale={1.02}>
+                <Card className='border border-[rgba(59,130,246,0.35)] bg-[rgba(255,255,255,0.08)] text-[#E5E7EB] shadow-[0_0_36px_rgba(59,130,246,0.25)] backdrop-blur-xl'>
+                  <CardHeader className='space-y-3'>
+                    <div className='flex flex-wrap items-center gap-3'>
+                      <Badge className='bg-[rgba(59,130,246,0.18)] text-[#93C5FD] border-[rgba(59,130,246,0.35)]'>Learning Path</Badge>
+                      <Badge className='bg-[rgba(139,92,246,0.16)] text-[#C4B5FD] border-[rgba(139,92,246,0.35)]'>
+                        {dashboardData?.user?.badge || 'Learner'}
+                      </Badge>
+                    </div>
+                    <div className='space-y-2'>
+                      <CardTitle className='text-2xl sm:text-3xl'>Welcome back, {profile?.name || 'Learner'}</CardTitle>
+                      <CardDescription className='text-[#9CA3AF]'>Continue your journey with focused lessons and progress insights.</CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent className='space-y-5'>
+                    {learnerContinue ? (
+                      <div className='rounded-2xl border border-[rgba(59,130,246,0.25)] bg-[rgba(15,23,42,0.5)] p-4'>
+                        <div className='flex flex-wrap items-center justify-between gap-3'>
+                          <div>
+                            <p className='text-sm text-[#9CA3AF]'>Continue learning</p>
+                            <p className='text-lg font-semibold text-[#E5E7EB]'>
+                              {learnerContinue.courseId?.title || 'Your course'}
+                            </p>
+                          </div>
+                          <Badge className='bg-[rgba(34,211,238,0.2)] text-[#22D3EE] border-[rgba(34,211,238,0.3)]'>
+                            {learnerContinue.progressPercent || 0}% complete
+                          </Badge>
+                        </div>
+                        <div className='mt-4 space-y-3'>
+                          <Progress
+                            value={learnerContinue.progressPercent || 0}
+                            className='h-2 bg-[rgba(255,255,255,0.12)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)]'
+                          />
+                          <Link to={`/learn/${learnerContinue.courseId?._id}`}>
+                            <Button className='bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] text-white shadow-[0_0_22px_rgba(59,130,246,0.4)]'>
+                              Resume Lesson
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className='rounded-2xl border border-dashed border-[rgba(59,130,246,0.25)] bg-[rgba(15,23,42,0.35)] p-4 text-sm text-[#9CA3AF]'>
+                        Enroll in a course to start tracking progress here.
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </ParallaxTilt>
 
-        <motion.div variants={itemVariants} className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5'>
-          {stats.map((item) => (
-            <ParallaxTilt key={item.label} variants={itemVariants} max={8} hoverScale={1.015}>
+              <ParallaxTilt max={8} hoverScale={1.01}>
+                <Card className='border border-[rgba(139,92,246,0.35)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
+                  <CardHeader>
+                    <CardTitle className='text-lg'>Total Points</CardTitle>
+                    <CardDescription className='text-[#9CA3AF]'>Badge progression</CardDescription>
+                  </CardHeader>
+                  <CardContent className='flex flex-col items-center gap-4'>
+                    {(() => {
+                      const points = dashboardData?.user?.points ?? 0;
+                      const badge = dashboardData?.user?.badge || 'Newbie';
+                      const currentIndex = Math.max(0, BADGE_TRACK.findIndex((b) => b.label === badge));
+                      const current = BADGE_TRACK[currentIndex] || BADGE_TRACK[0];
+                      const next = BADGE_TRACK[Math.min(currentIndex + 1, BADGE_TRACK.length - 1)];
+                      const span = Math.max(1, next.points - current.points);
+                      const pct = clamp(((points - current.points) / span) * 100);
+
+                      return (
+                        <>
+                          <ProgressRing
+                            value={currentIndex === BADGE_TRACK.length - 1 ? 100 : pct}
+                            label={`${points} pts`}
+                            sublabel={`Next: ${next.label}`}
+                            size={140}
+                            gradientId='points-ring'
+                          />
+                          <div className='w-full rounded-xl border border-[rgba(59,130,246,0.25)] bg-[rgba(15,23,42,0.4)] p-3 text-xs text-[#9CA3AF]'>
+                            Current badge: <span className='text-[#E5E7EB] font-semibold'>{current.label}</span>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </CardContent>
+                </Card>
+              </ParallaxTilt>
+            </div>
+
+            <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
+              {[
+                { label: 'Total Courses', value: dashboardData.summary?.totalCourses ?? 0 },
+                { label: 'Completed', value: dashboardData.summary?.completedCourses ?? 0 },
+                { label: 'In Progress', value: dashboardData.summary?.inProgressCourses ?? 0 },
+                { label: 'Avg Progress', value: `${dashboardData.summary?.averageProgress ?? 0}%` },
+              ].map((item) => (
+                <ParallaxTilt key={item.label} max={8} hoverScale={1.015}>
+                  <Card className='border border-[rgba(59,130,246,0.25)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] backdrop-blur-xl'>
+                    <CardHeader className='space-y-1'>
+                      <CardDescription className='text-[#9CA3AF]'>{item.label}</CardDescription>
+                      <CardTitle className='text-2xl text-[#E5E7EB]'>{item.value}</CardTitle>
+                    </CardHeader>
+                  </Card>
+                </ParallaxTilt>
+              ))}
+            </div>
+
+            <div className='grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]'>
               <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
                 <CardHeader>
-                  <CardDescription className='text-[#9CA3AF]'>{item.label}</CardDescription>
-                  <CardTitle className='text-2xl text-[#E5E7EB]'>{item.value}</CardTitle>
+                  <CardTitle className='text-lg'>My Courses</CardTitle>
+                  <CardDescription className='text-[#9CA3AF]'>Continue where you left off</CardDescription>
                 </CardHeader>
+                <CardContent className='space-y-3'>
+                  {dashboardData.courseProgress?.length ? (
+                    dashboardData.courseProgress.slice(0, 4).map((progress) => (
+                      <div key={progress._id} className='rounded-xl border border-[rgba(59,130,246,0.2)] bg-[rgba(15,23,42,0.45)] p-4'>
+                        <div className='flex items-center justify-between gap-3'>
+                          <div>
+                            <p className='text-sm font-semibold text-[#E5E7EB]'>
+                              {progress.courseId?.title || 'Course'}
+                            </p>
+                            <p className='text-xs text-[#9CA3AF]'>{progress.completedLessons?.length || 0} lessons completed</p>
+                          </div>
+                          <Badge className='bg-[rgba(34,211,238,0.2)] text-[#22D3EE] border-[rgba(34,211,238,0.3)]'>
+                            {progress.progressPercent || 0}%
+                          </Badge>
+                        </div>
+                        <div className='mt-3 space-y-2'>
+                          <Progress
+                            value={progress.progressPercent || 0}
+                            className='h-2 bg-[rgba(255,255,255,0.12)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#3B82F6_0%,#22D3EE_100%)]'
+                          />
+                          <Link to={`/learn/${progress.courseId?._id}`}>
+                            <Button size='sm' className='bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] text-white'>
+                              {progress.status === 'completed' ? 'Review' : 'Continue'}
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className='text-sm text-[#9CA3AF]'>You have not enrolled in any courses yet.</p>
+                  )}
+                </CardContent>
               </Card>
-            </ParallaxTilt>
-          ))}
-        </motion.div>
 
-        {profile?.role === 'instructor' && dashboardData?.summary ? (
+              <Card className='border border-[rgba(139,92,246,0.3)] bg-[rgba(255,255,255,0.05)] text-[#E5E7EB] backdrop-blur-xl'>
+                <CardHeader>
+                  <CardTitle className='text-lg'>Your Progress</CardTitle>
+                  <CardDescription className='text-[#9CA3AF]'>Top course momentum</CardDescription>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                  {(() => {
+                    const sorted = [...(dashboardData.courseProgress || [])]
+                      .sort((a, b) => (b.progressPercent || 0) - (a.progressPercent || 0))
+                      .slice(0, 3);
+
+                    if (!sorted.length) {
+                      return <p className='text-sm text-[#9CA3AF]'>No progress data yet.</p>;
+                    }
+
+                    return (
+                      <>
+                        <div className='flex items-center justify-between gap-3'>
+                          {sorted.map((course, idx) => (
+                            <ProgressRing
+                              key={course._id}
+                              value={course.progressPercent || 0}
+                              label={course.courseId?.title?.split(' ').slice(0, 2).join(' ') || `Course ${idx + 1}`}
+                              sublabel={`${course.progressPercent || 0}%`}
+                              size={92}
+                              gradientId={`progress-ring-${idx}`}
+                            />
+                          ))}
+                        </div>
+                        <div className='space-y-3'>
+                          {sorted.map((course) => (
+                            <div key={`${course._id}-bar`} className='space-y-1'>
+                              <div className='flex items-center justify-between text-xs text-[#9CA3AF]'>
+                                <span className='truncate pr-2'>{course.courseId?.title || 'Course'}</span>
+                                <span className='text-[#93C5FD]'>{course.progressPercent || 0}%</span>
+                              </div>
+                              <Progress
+                                value={course.progressPercent || 0}
+                                className='h-2 bg-[rgba(255,255,255,0.12)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#8B5CF6_0%,#22D3EE_100%)]'
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        ) : null}
+
+        {isInstructor ? (
+          <>
+            <motion.div variants={itemVariants} className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5'>
+              {stats.map((item) => (
+                <ParallaxTilt key={item.label} variants={itemVariants} max={8} hoverScale={1.015}>
+                  <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
+                    <CardHeader>
+                      <CardDescription className='text-[#9CA3AF]'>{item.label}</CardDescription>
+                      <CardTitle className='text-2xl text-[#E5E7EB]'>{item.value}</CardTitle>
+                    </CardHeader>
+                  </Card>
+                </ParallaxTilt>
+              ))}
+            </motion.div>
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
             <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
               <CardHeader>
@@ -363,9 +593,10 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </div>
+          </>
         ) : null}
 
-        {profile?.role === 'instructor' ? (
+        {isInstructor ? (
           <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
             <CardHeader>
               <CardTitle className='text-xl'>Course Engagement</CardTitle>
@@ -404,82 +635,19 @@ export default function DashboardPage() {
           </Card>
         ) : null}
 
-        {profile?.role === 'learner' && dashboardData?.summary ? (
-          <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>
-            <CardHeader>
-              <CardTitle className='text-xl'>Learning Progress</CardTitle>
-              <CardDescription className='text-[#9CA3AF]'>Average completion from report endpoint</CardDescription>
-            </CardHeader>
-            <CardContent className='space-y-2'>
-              <div className='flex items-center justify-between text-sm text-[#9CA3AF]'>
-                <span>Average progress</span>
-                <span>{dashboardData.summary.averageProgress || 0}%</span>
-              </div>
-              <Progress
-                value={dashboardData.summary.averageProgress || 0}
-                className='h-2 bg-[rgba(255,255,255,0.12)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#3B82F6_0%,#8B5CF6_100%)]'
-              />
-              <div className='flex flex-wrap gap-3 pt-4'>
-                <Link to='/progress'>
-                  <Button size='sm' variant='outline' className='border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.05)] text-[#22D3EE] hover:bg-[rgba(34,211,238,0.1)]'>
-                    📈 View Details
-                  </Button>
-                </Link>
-                <Link to='/my-reviews'>
-                  <Button size='sm' variant='outline' className='border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.05)] text-[#A78BFA] hover:bg-[rgba(139,92,246,0.1)]'>
-                    ⭐ My Reviews
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        ) : null}
-
-        {profile?.role === 'learner' && dashboardData?.courseProgress?.length > 0 ? (
-          <Card className='border border-[rgba(139,92,246,0.3)] bg-[rgba(255,255,255,0.04)] text-[#E5E7EB] backdrop-blur-xl'>
-            <CardHeader>
-              <CardTitle className='text-xl'>My Enrolled Courses</CardTitle>
-              <CardDescription className='text-[#9CA3AF]'>Continue your learning journey</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
-                {dashboardData.courseProgress.map((enrolled) => (
-                  <ParallaxTilt
-                    key={enrolled._id}
-                    className='relative overflow-hidden rounded-[16px] border border-[rgba(255,255,255,0.1)] bg-[rgba(0,0,0,0.2)] flex flex-col transition-all hover:bg-[rgba(255,255,255,0.05)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
-                    max={10}
-                    hoverScale={1.02}
-                  >
-                    <div className='flex items-center gap-3 p-4 border-b border-[rgba(255,255,255,0.05)] bg-[linear-gradient(90deg,rgba(139,92,246,0.1),transparent)]'>
-                       <div className="w-10 h-10 rounded-lg bg-[rgba(139,92,246,0.2)] flex items-center justify-center text-[#A78BFA] border border-[rgba(139,92,246,0.3)] shadow-[0_0_10px_rgba(139,92,246,0.2)]">
-                          🎬
-                       </div>
-                       <div className="flex-1">
-                         <h3 className="font-semibold text-[#E5E7EB] line-clamp-1">{enrolled.courseId?.title || 'Unknown Course'}</h3>
-                         <p className="text-xs text-[#9CA3AF] mt-0.5">{enrolled.completedLessons?.length || 0} lessons completed</p>
-                       </div>
-                    </div>
-                    
-                    <div className='p-4 flex-1 flex flex-col justify-end space-y-4'>
-                       <div className="space-y-1.5">
-                         <div className="flex justify-between items-center text-xs text-[#9CA3AF]">
-                           <span>Current Progress</span>
-                           <span className="font-medium text-[#A78BFA]">{enrolled.progressPercent || 0}%</span>
-                         </div>
-                         <Progress value={enrolled.progressPercent || 0} className='h-1.5 bg-[rgba(255,255,255,0.1)] **:data-[slot=progress-indicator]:bg-[linear-gradient(90deg,#8B5CF6_0%,#EC4899_100%)]' />
-                       </div>
-                       
-                       <Link to={`/learn/${enrolled.courseId?._id}`} className="w-full">
-                         <Button className='w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-[0_0_15px_rgba(139,92,246,0.25)] border-none h-9 text-xs rounded-lg transition-colors'>
-                           {enrolled.progressPercent === 100 ? 'Review completed course' : (enrolled.progressPercent > 0 ? 'Continue learning' : 'Start learning')}
-                         </Button>
-                       </Link>
-                    </div>
-                  </ParallaxTilt>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        {isLearner && dashboardData?.summary ? (
+          <div className='flex flex-wrap gap-3'>
+            <Link to='/progress'>
+              <Button size='sm' variant='outline' className='border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.05)] text-[#22D3EE] hover:bg-[rgba(34,211,238,0.1)]'>
+                View Progress Details
+              </Button>
+            </Link>
+            <Link to='/my-reviews'>
+              <Button size='sm' variant='outline' className='border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.05)] text-[#A78BFA] hover:bg-[rgba(139,92,246,0.1)]'>
+                My Reviews
+              </Button>
+            </Link>
+          </div>
         ) : null}
 
         <Card className='border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.06)] text-[#E5E7EB] backdrop-blur-xl'>

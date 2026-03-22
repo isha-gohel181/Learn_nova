@@ -266,7 +266,7 @@ export default function QuizResultsPage() {
       <div className='relative max-w-3xl mx-auto px-4 py-8 sm:px-6 space-y-6'>
 
         {/* ── Hero Result Banner ── */}
-        <div className={`rounded-2xl border p-6 sm:p-8 text-center ${
+        <div className={`glass-panel rounded-2xl border p-6 sm:p-8 text-center ${
           lastPassed
             ? 'border-[rgba(34,197,94,0.4)] bg-[linear-gradient(135deg,rgba(5,150,105,0.12),rgba(16,185,129,0.06))] shadow-[0_0_40px_rgba(16,185,129,0.2)]'
             : 'border-[rgba(239,68,68,0.3)] bg-[linear-gradient(135deg,rgba(220,38,38,0.1),rgba(239,68,68,0.05))] shadow-[0_0_40px_rgba(239,68,68,0.15)]'
@@ -274,7 +274,7 @@ export default function QuizResultsPage() {
           <div className='flex flex-col items-center gap-4'>
             <ScoreRing percent={lastAttempt?.percentage ?? 0} isPassed={lastPassed} size={130} />
             <div>
-              <h1 className='text-2xl sm:text-3xl font-bold text-[#F9FAFB] mb-1'>
+              <h1 className='font-heading text-2xl sm:text-3xl font-semibold text-[#F9FAFB] mb-1'>
                 {lastPassed ? '🎉 Congratulations!' : '😞 Keep Trying!'}
               </h1>
               <p className='text-[#9CA3AF] text-sm'>
@@ -293,7 +293,7 @@ export default function QuizResultsPage() {
             { label: 'Total Attempts', value: totalAttempts, icon: '🔄', color: 'text-[#93C5FD]' },
             { label: 'Last Score', value: `${lastAttempt?.percentage ?? 0}%`, icon: '📈', color: lastPassed ? 'text-[#4ADE80]' : 'text-[#FCA5A5]' },
           ].map((stat) => (
-            <div key={stat.label} className='rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] p-4 text-center'>
+            <div key={stat.label} className='glass-card rounded-xl p-4 text-center'>
               <span className='text-2xl block mb-1'>{stat.icon}</span>
               <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
               <p className='text-xs text-[#6B7280] mt-0.5'>{stat.label}</p>
@@ -313,8 +313,8 @@ export default function QuizResultsPage() {
         )}
 
         {/* ── Attempt History ── */}
-        <div>
-          <h2 className='text-lg font-bold text-[#E5E7EB] mb-4'>Attempt History</h2>
+        <div className='glass-card rounded-2xl p-5'>
+          <h2 className='font-heading text-lg font-semibold text-[#E5E7EB] mb-4'>Attempt History</h2>
           {attempts.length === 0 ? (
             <p className='text-[#6B7280] text-sm'>No attempts found.</p>
           ) : (

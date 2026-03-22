@@ -287,20 +287,21 @@ export default function CourseCatalogPage() {
 
         {/* ── hero section ── */}
         <section className='py-12 text-center'>
-          <div className='mx-auto max-w-3xl space-y-4'>
-            <Badge className='rounded-full bg-[rgba(59,130,246,0.15)] px-3 py-1 text-xs font-medium text-[#93C5FD] border border-[rgba(59,130,246,0.3)]'>
-              🚀 Public Course Catalog
+          <div className='mx-auto max-w-4xl space-y-5'>
+            <Badge className='rounded-full border border-[rgba(59,130,246,0.35)] bg-[rgba(59,130,246,0.12)] px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#93C5FD]'>
+              Public Course Catalog
             </Badge>
-            <h1 className='text-4xl font-bold tracking-tight text-[#E5E7EB] sm:text-5xl'>
-              Discover Your Next{' '}
-              <span className='bg-[linear-gradient(90deg,#3B82F6,#22D3EE,#8B5CF6)] bg-clip-text text-transparent'>
+            <h1 className='font-heading text-4xl font-semibold tracking-tight text-[#E5E7EB] sm:text-5xl lg:text-6xl'>
+              Discover your next
+              <span className='block bg-[linear-gradient(90deg,#3B82F6,#22D3EE,#8B5CF6)] bg-clip-text text-transparent'>
                 Learning Adventure
               </span>
             </h1>
-            <p className='text-lg text-[#9CA3AF]'>
+            <p className='text-base text-[#9CA3AF] sm:text-lg'>
               Browse {pagination.total > 0 ? pagination.total : 'hundreds of'} published courses from expert instructors.
               Filter by access type, search by topic, and start learning today.
             </p>
+            <div className='mx-auto h-px w-32 bg-[linear-gradient(90deg,rgba(59,130,246,0),rgba(59,130,246,0.6),rgba(59,130,246,0))]' />
           </div>
         </section>
 

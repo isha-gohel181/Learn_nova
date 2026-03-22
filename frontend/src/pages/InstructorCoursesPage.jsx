@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { API_BASE_URL, getInstructorCourses, deleteCourse, publishCourse } from '@/lib/api';
-import { ArrowLeft, BookOpen, Plus, Edit, Trash2, Eye, EyeOff, MoreVertical, PlayCircle, FileQuestion, BarChart } from 'lucide-react';
+import { ArrowLeft, BookOpen, Plus, Edit, Trash2, Eye, EyeOff, MoreVertical, PlayCircle, FileQuestion, BarChart, Share2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import ParallaxTilt from '@/components/ParallaxTilt';
 
 function isVideoUrl(url) {
@@ -28,6 +29,7 @@ export default function InstructorCoursesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [copiedCourseId, setCopiedCourseId] = useState(null);
 
   useEffect(() => {
     async function loadCourses() {
@@ -70,6 +72,16 @@ export default function InstructorCoursesPage() {
       } catch (err) {
         alert(err.message || 'Failed to delete course');
       }
+    }
+  };
+
+  const copyShareLink = async (shareUrl) => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedCourseId(shareUrl);
+      setTimeout(() => setCopiedCourseId(null), 1800);
+    } catch (err) {
+      window.prompt('Copy this course link:', shareUrl);
     }
   };
 
@@ -252,11 +264,41 @@ export default function InstructorCoursesPage() {
                               <span className='text-blue-400'>Free Access</span>
                             )}
                           </div>
-                          <Link to={`/instructor/course/${course._id}/edit`} className='w-1/2'>
-                            <Button size='sm' className='w-full bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-white border border-[rgba(255,255,255,0.1)]'>
-                              Manage
-                            </Button>
-                          </Link>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size='sm'
+                                className='w-1/2 bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-white border border-[rgba(255,255,255,0.1)]'
+                              >
+                                <Share2 className='w-4 h-4 mr-2' />
+                                Share
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className='sm:max-w-lg bg-[#0F172A] border-[rgba(255,255,255,0.1)] text-[#E5E7EB]'>
+                              <div className='space-y-4'>
+                                <p className='text-sm font-medium text-[#93C5FD]'>
+                                  Allow to Share Course link (The purpose of this share link is to share the course link to the specific person)
+                                </p>
+                                <div className='flex items-center gap-2 rounded-xl border border-[rgba(59,130,246,0.3)] bg-[rgba(255,255,255,0.04)] px-3 py-2'>
+                                  <input
+                                    readOnly
+                                    value={`${window.location.origin}/courses/${course._id}`}
+                                    className='flex-1 bg-transparent text-sm text-[#E5E7EB] outline-none'
+                                  />
+                                  <Button
+                                    size='sm'
+                                    className='bg-[linear-gradient(90deg,#3B82F6,#8B5CF6)] text-white'
+                                    onClick={() => copyShareLink(`${window.location.origin}/courses/${course._id}`)}
+                                  >
+                                    {copiedCourseId === `${window.location.origin}/courses/${course._id}` ? 'Copied' : 'Copy'}
+                                  </Button>
+                                </div>
+                                {copiedCourseId === `${window.location.origin}/courses/${course._id}` && (
+                                  <p className='text-xs text-[#34D399]'>Link copied to clipboard.</p>
+                                )}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </div>
                       </div>
                     </ParallaxTilt>

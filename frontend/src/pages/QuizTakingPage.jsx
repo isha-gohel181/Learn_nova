@@ -39,7 +39,7 @@ function QuestionCard({ question, questionIndex, totalQuestions, answers, onAnsw
 
   return (
     <ParallaxTilt max={8} hoverScale={1.01}>
-      <div className='rounded-2xl border border-[rgba(59,130,246,0.2)] bg-[rgba(255,255,255,0.04)] backdrop-blur-xl p-6 sm:p-8'>
+      <div className='glass-card rounded-2xl border-[rgba(59,130,246,0.3)] p-6 sm:p-8'>
       {/* question header */}
       <div className='flex items-start justify-between gap-4 mb-6'>
         <div className='flex items-start gap-3'>
@@ -279,7 +279,7 @@ export default function QuizTakingPage() {
 
       <div className='relative max-w-3xl mx-auto px-4 py-8 sm:px-6 space-y-6'>
         {/* ── Quiz Header ── */}
-        <div className='rounded-2xl border border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.06)] backdrop-blur-xl p-6'>
+        <div className='glass-panel rounded-2xl border-[rgba(139,92,246,0.35)] bg-[rgba(139,92,246,0.08)] p-6'>
           <div className='flex items-start justify-between gap-4 mb-4'>
             <div>
               <div className='flex items-center gap-2 mb-2'>
@@ -292,7 +292,7 @@ export default function QuizTakingPage() {
                   </span>
                 )}
               </div>
-              <h1 className='text-xl sm:text-2xl font-bold text-[#F9FAFB]'>Course Quiz</h1>
+              <h1 className='font-heading text-2xl sm:text-3xl font-semibold text-[#F9FAFB]'>Course Quiz</h1>
               <p className='text-sm text-[#9CA3AF] mt-1'>
                 {totalQ} question{totalQ !== 1 ? 's' : ''} · All the best! 🎯
               </p>
@@ -308,7 +308,7 @@ export default function QuizTakingPage() {
         </div>
 
         {/* ── Question Navigation pills ── */}
-        <div className='flex flex-wrap gap-2'>
+        <div className='flex flex-wrap gap-2 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] p-3'>
           {quiz.questions.map((_, i) => {
             const isAnswered = answers[i] && answers[i].length > 0;
             const isCurrent = i === currentQ;
