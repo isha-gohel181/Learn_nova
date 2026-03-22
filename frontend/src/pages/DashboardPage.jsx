@@ -341,7 +341,7 @@ export default function DashboardPage() {
                       </Badge>
                     </div>
                     <div className='space-y-2'>
-                      <CardTitle className='text-2xl sm:text-3xl'>Welcome back, {profile?.name || 'Learner'}</CardTitle>
+                      <CardTitle className='text-2xl sm:text-3xl'>Continue your journey</CardTitle>
                       <CardDescription className='text-[#9CA3AF]'>Continue your journey with focused lessons and progress insights.</CardDescription>
                     </div>
                   </CardHeader>
