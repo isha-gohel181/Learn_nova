@@ -76,9 +76,9 @@ class QuizController {
         });
       }
 
-      // Hide correct answers from learners
+      // Hide correct answers from learners when user context exists
       const quizData = quiz.toObject();
-      if (req.user.role === 'learner') {
+      if (req.user?.role === 'learner') {
         quizData.questions = quizData.questions.map((q) => {
           const { correctAnswers, explanation, ...rest } = q;
           return rest;

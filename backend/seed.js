@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const bcryptjs = require('bcryptjs');
 const User = require('./src/models/user.model');
 const Course = require('./src/models/course.model');
 const Lesson = require('./src/models/lesson.model');
 const Quiz = require('./src/models/quiz.model');
+const Progress = require('./src/models/progress.model');
+const Review = require('./src/models/review.model');
 
 dotenv.config();
 
@@ -18,9 +21,13 @@ const seedDatabase = async () => {
     await Course.deleteMany({});
     await Lesson.deleteMany({});
     await Quiz.deleteMany({});
+    await Progress.deleteMany({});
+    await Review.deleteMany({});
 
-    // Create sample instructors
-    const instructors = await User.insertMany([
+    const saltRounds = parseInt(process.env.BCRYPT_ROUNDS) || 10;
+    const hashPassword = async (password) => bcryptjs.hash(password, saltRounds);
+
+    const instructorSeed = [
       {
         name: 'John Instructor',
         email: 'john@instructor.com',
@@ -37,10 +44,9 @@ const seedDatabase = async () => {
         points: 120,
         badge: 'Master',
       },
-    ]);
+    ];
 
-    // Create sample learners
-    const learners = await User.insertMany([
+    const learnerSeed = [
       {
         name: 'Alice Learner',
         email: 'alice@learner.com',
@@ -65,7 +71,57 @@ const seedDatabase = async () => {
         points: 15,
         badge: 'Newbie',
       },
-    ]);
+      {
+        name: 'Dhatri Patel',
+        email: 'dhatripatel67@gmail.com',
+        password: '123456A@a',
+        role: 'learner',
+        points: 55,
+        badge: 'Achiever',
+      },
+      {
+        name: 'Dhatri Patel (Alt)',
+        email: 'dhatripatel2336@gmail.com',
+        password: '123456A@a',
+        role: 'learner',
+        points: 25,
+        badge: 'Explorer',
+      },
+      {
+        name: 'Isha Gupta',
+        email: 'isha.learner1@example.com',
+        password: 'password123',
+        role: 'learner',
+        points: 35,
+        badge: 'Explorer',
+      },
+      {
+        name: 'Parth Mehta',
+        email: 'parth.learner2@example.com',
+        password: 'password123',
+        role: 'learner',
+        points: 90,
+        badge: 'Expert',
+      },
+    ];
+
+    const instructors = await User.insertMany(
+      await Promise.all(
+        instructorSeed.map(async (user) => ({
+          ...user,
+          password: await hashPassword(user.password),
+        }))
+      )
+    );
+
+    const learners = await User.insertMany(
+      await Promise.all(
+        learnerSeed.map(async (user) => ({
+          ...user,
+          password: await hashPassword(user.password),
+        }))
+      )
+    );
 
     // Create sample courses
     const courses = await Course.insertMany([
@@ -79,7 +135,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[0]._id, learners[1]._id],
+        enrolledUsers: [learners[0]._id, learners[1]._id, learners[3]._id],
         totalLessons: 3,
         totalRating: 18,
         averageRating: 4.5,
@@ -95,7 +151,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[0]._id],
+        enrolledUsers: [learners[0]._id, learners[3]._id],
         totalLessons: 4,
         totalRating: 14,
         averageRating: 4.67,
@@ -111,7 +167,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[1]._id,
-        enrolledUsers: [learners[1]._id, learners[2]._id],
+        enrolledUsers: [learners[1]._id, learners[2]._id, learners[4]._id],
         totalLessons: 5,
         totalRating: 25,
         averageRating: 4.2,
@@ -140,7 +196,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[2]._id],
+        enrolledUsers: [learners[2]._id, learners[3]._id],
         totalLessons: 8,
         totalRating: 50,
         averageRating: 4.8,
@@ -156,7 +212,7 @@ const seedDatabase = async () => {
         accessType: 'paid',
         price: 29.99,
         instructorId: instructors[1]._id,
-        enrolledUsers: [learners[0]._id],
+        enrolledUsers: [learners[0]._id, learners[4]._id],
         totalLessons: 6,
         totalRating: 30,
         averageRating: 4.4,
@@ -172,7 +228,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[1]._id],
+        enrolledUsers: [learners[1]._id, learners[3]._id],
         totalLessons: 4,
         totalRating: 20,
         averageRating: 4.7,
@@ -204,7 +260,7 @@ const seedDatabase = async () => {
         accessType: 'paid',
         price: 89.99,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[0]._id, learners[2]._id],
+        enrolledUsers: [learners[0]._id, learners[2]._id, learners[3]._id],
         totalLessons: 15,
         totalRating: 120,
         averageRating: 4.9,
@@ -220,7 +276,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[1]._id,
-        enrolledUsers: [learners[1]._id, learners[0]._id, learners[2]._id],
+        enrolledUsers: [learners[1]._id, learners[0]._id, learners[2]._id, learners[4]._id],
         totalLessons: 12,
         totalRating: 85,
         averageRating: 4.6,
@@ -236,7 +292,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[2]._id],
+        enrolledUsers: [learners[2]._id, learners[4]._id],
         totalLessons: 5,
         totalRating: 15,
         averageRating: 4.1,
@@ -268,7 +324,7 @@ const seedDatabase = async () => {
         accessType: 'paid',
         price: 39.99,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[1]._id],
+        enrolledUsers: [learners[1]._id, learners[4]._id],
         totalLessons: 9,
         totalRating: 40,
         averageRating: 4.5,
@@ -284,7 +340,7 @@ const seedDatabase = async () => {
         accessType: 'open',
         price: 0,
         instructorId: instructors[1]._id,
-        enrolledUsers: [learners[0]._id, learners[2]._id],
+        enrolledUsers: [learners[0]._id, learners[2]._id, learners[3]._id, learners[5]._id],
         totalLessons: 14,
         totalRating: 65,
         averageRating: 4.8,
@@ -300,7 +356,7 @@ const seedDatabase = async () => {
         accessType: 'paid',
         price: 19.99,
         instructorId: instructors[0]._id,
-        enrolledUsers: [learners[1]._id],
+        enrolledUsers: [learners[1]._id, learners[4]._id],
         totalLessons: 7,
         totalRating: 22,
         averageRating: 4.6,
@@ -406,6 +462,190 @@ const seedDatabase = async () => {
       })
     );
 
+    const lessonsByCourseId = lessons.reduce((acc, lesson) => {
+      const key = lesson.courseId.toString();
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(lesson._id);
+      return acc;
+    }, {});
+
+    const progressEntries = [
+      {
+        userId: learners[0]._id,
+        courseId: courses[0]._id,
+        completedLessons: (lessonsByCourseId[courses[0]._id.toString()] || []).slice(0, 2),
+        progressPercent: 65,
+        status: 'in_progress',
+        totalAttempts: 1,
+        highestScore: 80,
+        quizAttempts: [
+          { attemptNumber: 1, score: 8, percentage: 80, answers: [], pointsEarned: 8 },
+        ],
+      },
+      {
+        userId: learners[0]._id,
+        courseId: courses[2]._id,
+        completedLessons: [],
+        progressPercent: 20,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[0]._id,
+        courseId: courses[8]._id,
+        completedLessons: [],
+        progressPercent: 100,
+        status: 'completed',
+        completedDate: new Date(),
+        totalAttempts: 2,
+        highestScore: 90,
+        quizAttempts: [
+          { attemptNumber: 1, score: 7, percentage: 70, answers: [], pointsEarned: 7 },
+          { attemptNumber: 2, score: 9, percentage: 90, answers: [], pointsEarned: 9 },
+        ],
+      },
+      {
+        userId: learners[1]._id,
+        courseId: courses[1]._id,
+        completedLessons: (lessonsByCourseId[courses[1]._id.toString()] || []).slice(0, 1),
+        progressPercent: 35,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[1]._id,
+        courseId: courses[3]._id,
+        completedLessons: [],
+        progressPercent: 0,
+        status: 'not_started',
+      },
+      {
+        userId: learners[1]._id,
+        courseId: courses[5]._id,
+        completedLessons: [],
+        progressPercent: 60,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[1]._id,
+        courseId: courses[9]._id,
+        completedLessons: [],
+        progressPercent: 100,
+        status: 'completed',
+        completedDate: new Date(),
+      },
+      {
+        userId: learners[2]._id,
+        courseId: courses[2]._id,
+        completedLessons: [],
+        progressPercent: 45,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[2]._id,
+        courseId: courses[4]._id,
+        completedLessons: [],
+        progressPercent: 100,
+        status: 'completed',
+        completedDate: new Date(),
+      },
+      {
+        userId: learners[2]._id,
+        courseId: courses[10]._id,
+        completedLessons: [],
+        progressPercent: 25,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[3]._id,
+        courseId: courses[0]._id,
+        completedLessons: (lessonsByCourseId[courses[0]._id.toString()] || []).slice(0, 1),
+        progressPercent: 40,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[3]._id,
+        courseId: courses[4]._id,
+        completedLessons: [],
+        progressPercent: 70,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[3]._id,
+        courseId: courses[8]._id,
+        completedLessons: [],
+        progressPercent: 100,
+        status: 'completed',
+        completedDate: new Date(),
+      },
+      {
+        userId: learners[4]._id,
+        courseId: courses[2]._id,
+        completedLessons: [],
+        progressPercent: 30,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[4]._id,
+        courseId: courses[5]._id,
+        completedLessons: [],
+        progressPercent: 55,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[4]._id,
+        courseId: courses[9]._id,
+        completedLessons: [],
+        progressPercent: 100,
+        status: 'completed',
+        completedDate: new Date(),
+      },
+      {
+        userId: learners[4]._id,
+        courseId: courses[13]._id,
+        completedLessons: [],
+        progressPercent: 50,
+        status: 'in_progress',
+      },
+      {
+        userId: learners[5]._id,
+        courseId: courses[12]._id,
+        completedLessons: [],
+        progressPercent: 100,
+        status: 'completed',
+        completedDate: new Date(),
+      },
+      {
+        userId: learners[5]._id,
+        courseId: courses[7]._id,
+        completedLessons: [],
+        progressPercent: 40,
+        status: 'in_progress',
+      },
+    ];
+
+    const progressData = await Progress.insertMany(progressEntries);
+
+    const reviewEntries = [
+      { userId: learners[0]._id, courseId: courses[0]._id, rating: 5, comment: 'Great starter course with clear lessons.' },
+      { userId: learners[1]._id, courseId: courses[0]._id, rating: 4, comment: 'Helpful refresher, pacing was good.' },
+      { userId: learners[2]._id, courseId: courses[2]._id, rating: 4, comment: 'Solid React coverage.' },
+      { userId: learners[0]._id, courseId: courses[1]._id, rating: 5, comment: 'Loved the deep dive into JS concepts.' },
+      { userId: learners[1]._id, courseId: courses[5]._id, rating: 4, comment: 'Great UI/UX tips.' },
+      { userId: learners[2]._id, courseId: courses[4]._id, rating: 5, comment: 'Python explanations were clear.' },
+      { userId: learners[0]._id, courseId: courses[8]._id, rating: 5, comment: 'Machine learning content was excellent.' },
+      { userId: learners[1]._id, courseId: courses[6]._id, rating: 4, comment: 'TypeScript examples were helpful.' },
+      { userId: learners[2]._id, courseId: courses[9]._id, rating: 4, comment: 'Next.js overview was practical.' },
+      { userId: learners[0]._id, courseId: courses[12]._id, rating: 5, comment: 'AWS prep was solid.' },
+      { userId: learners[3]._id, courseId: courses[0]._id, rating: 4, comment: 'Nice foundational coverage.' },
+      { userId: learners[3]._id, courseId: courses[4]._id, rating: 5, comment: 'Great Python walkthroughs.' },
+      { userId: learners[4]._id, courseId: courses[2]._id, rating: 4, comment: 'React modules were practical.' },
+      { userId: learners[4]._id, courseId: courses[5]._id, rating: 4, comment: 'Design tips are useful.' },
+      { userId: learners[4]._id, courseId: courses[13]._id, rating: 5, comment: 'Golang course was concise and clear.' },
+      { userId: learners[5]._id, courseId: courses[12]._id, rating: 5, comment: 'Great cloud fundamentals.' },
+      { userId: learners[5]._id, courseId: courses[7]._id, rating: 4, comment: 'DevOps overview was helpful.' },
+    ];
+
+    const reviews = await Review.insertMany(reviewEntries);
+
     console.log('✅ Database seeded successfully!');
     console.log(`
     Sample Data Created:
@@ -414,6 +654,8 @@ const seedDatabase = async () => {
     - ${courses.length} Courses
     - ${lessons.length} Lessons
     - ${quizzes.length} Quizzes
+    - ${progressData.length} Progress entries
+    - ${reviews.length} Reviews
 
     Sample Login Credentials:
     Instructor: john@instructor.com / password123
